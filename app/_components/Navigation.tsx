@@ -2,9 +2,11 @@
 
 import * as React from 'react';
 import Link from 'next/link';
+import { FaFire } from 'react-icons/fa';
+import { MdOutlineNewReleases } from 'react-icons/md';
+import { Button } from '@/components/ui/button';
 
 import { cn } from '@/lib/utils';
-import { ChevronDownIcon } from '@radix-ui/react-icons';
 import {
     NavigationMenu,
     NavigationMenuContent,
@@ -15,102 +17,53 @@ import {
     navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
 
-const components: { title: string; href: string; description: string }[] = [
+const menuItems: { title: string; href: string; description: string }[] = [
     {
-        title: 'Alert Dialog',
-        href: '/docs/primitives/alert-dialog',
+        title: 'Software Development',
+        href: '#',
         description:
-            'A modal dialog that interrupts the user with important content and expects a response.',
+            'Discussions on programming languages, development tools, and best practices.',
     },
     {
-        title: 'Hover Card',
-        href: '/docs/primitives/hover-card',
+        title: 'Networking & Security',
+        href: '#',
         description:
-            'For sighted users to preview content available behind a link.',
+            'Topics related to network configuration and protection strategies.',
     },
     {
-        title: 'Progress',
-        href: '/docs/primitives/progress',
+        title: 'Hardware & Gadgets',
+        href: '#',
         description:
-            'Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.',
+            'A space for sharing advice on building, upgrading, and troubleshooting hardware.',
     },
     {
-        title: 'Scroll-area',
-        href: '/docs/primitives/scroll-area',
-        description: 'Visually or semantically separates content.',
+        title: 'Cloud Computing',
+        href: '#',
+        description:
+            'Conversations about cloud platforms, services, and architecture.',
     },
     {
-        title: 'Tabs',
-        href: '/docs/primitives/tabs',
+        title: 'Tech News & Trends',
+        href: '#',
         description:
-            'A set of layered sections of content—known as tab panels—that are displayed one at a time.',
-    },
-    {
-        title: 'Tooltip',
-        href: '/docs/primitives/tooltip',
-        description:
-            'A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.',
+            'Updates and discussions on the latest trends in the technology world.',
     },
 ];
 
 export const Navigation = () => {
     return (
-        <NavigationMenu>
+        <NavigationMenu className='w-full'>
             <NavigationMenuList>
                 <NavigationMenuItem>
-                    <NavigationMenuTrigger>
-                        Getting started
-                    </NavigationMenuTrigger>
-                    <NavigationMenuContent>
-                        <ul className='grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]'>
-                            <li className='row-span-3'>
-                                <NavigationMenuLink asChild>
-                                    <a
-                                        className='flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md'
-                                        href='/'>
-                                        <ChevronDownIcon className='h-6 w-6' />
-                                        <div className='mb-2 mt-4 text-lg font-medium'>
-                                            shadcn/ui
-                                        </div>
-                                        <p className='text-sm leading-tight text-muted-foreground'>
-                                            Beautifully designed components that
-                                            you can copy and paste into your
-                                            apps. Accessible. Customizable. Open
-                                            Source.
-                                        </p>
-                                    </a>
-                                </NavigationMenuLink>
-                            </li>
-                            <ListItem
-                                href='/docs'
-                                title='Introduction'>
-                                Re-usable components built using Radix UI and
-                                Tailwind CSS.
-                            </ListItem>
-                            <ListItem
-                                href='/docs/installation'
-                                title='Installation'>
-                                How to install dependencies and structure your
-                                app.
-                            </ListItem>
-                            <ListItem
-                                href='/docs/primitives/typography'
-                                title='Typography'>
-                                Styles for headings, paragraphs, lists...etc
-                            </ListItem>
-                        </ul>
-                    </NavigationMenuContent>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                    <NavigationMenuTrigger>Components</NavigationMenuTrigger>
+                    <NavigationMenuTrigger>Threads</NavigationMenuTrigger>
                     <NavigationMenuContent>
                         <ul className='grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] '>
-                            {components.map((component) => (
+                            {menuItems.map((menuItem) => (
                                 <ListItem
-                                    key={component.title}
-                                    title={component.title}
-                                    href={component.href}>
-                                    {component.description}
+                                    key={menuItem.title}
+                                    title={menuItem.title}
+                                    href={menuItem.href}>
+                                    {menuItem.description}
                                 </ListItem>
                             ))}
                         </ul>
@@ -118,19 +71,36 @@ export const Navigation = () => {
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                     <Link
-                        href='/docs'
+                        href='#'
                         legacyBehavior
                         passHref>
                         <NavigationMenuLink
                             className={navigationMenuTriggerStyle()}>
-                            Documentation
+                            <FaFire className='size-4 mr-2' />
+                            Most Popular
+                        </NavigationMenuLink>
+                    </Link>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                    <Link
+                        href='#'
+                        legacyBehavior
+                        passHref>
+                        <NavigationMenuLink
+                            className={navigationMenuTriggerStyle()}>
+                            <MdOutlineNewReleases className='size-5 mr-2' />
+                            New & Trending
                         </NavigationMenuLink>
                     </Link>
                 </NavigationMenuItem>
             </NavigationMenuList>
+            <div className='flex gap-4'>
+                <Button variant='outline'>Log in</Button>
+                <Button>Sign up</Button>
+            </div>
         </NavigationMenu>
     );
-}
+};
 
 const ListItem = React.forwardRef<
     React.ElementRef<'a'>,
@@ -149,7 +119,7 @@ const ListItem = React.forwardRef<
                     <div className='text-sm font-medium leading-none'>
                         {title}
                     </div>
-                    <p className='line-clamp-2 text-sm leading-snug text-muted-foreground'>
+                    <p className='line-clamp-2 text-xs leading-snug text-muted-foreground'>
                         {children}
                     </p>
                 </a>

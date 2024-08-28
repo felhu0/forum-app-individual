@@ -1,23 +1,29 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css';
+import { Navigation } from './_components/Navigation';
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: "Forum App",
-  description: "Forum",
+    title: 'Forum App',
+    description: 'Forum',
 };
 
 export default function RootLayout({
-  children,
+    children,
 }: Readonly<{
-  children: React.ReactNode;
+    children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en">
-      {/*Providers ska vara här*/}
-      <body className={inter.className}>{children}</body>
-    </html>
-  );
+    return (
+        <html
+            lang='en'
+            suppressHydrationWarning>
+            {/*Providers ska vara här*/}
+            <body className={inter.className}>
+                <Navigation />
+                {children}
+            </body>
+        </html>
+    );
 }
