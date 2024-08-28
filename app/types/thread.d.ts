@@ -1,6 +1,6 @@
 import { User } from "./user";
 
-type ThreadCategory = "THREAD" | "QNA";
+type ThreadCategory = "NEW" | "HOT";
 
 type Thread = {
   id: number;
@@ -9,10 +9,4 @@ type Thread = {
   creationDate: Date;
   description: string;
   creator: User;
-}
-
-type QNAThread =  Thread & { 
-	category: "QNA";
-	isAnswered: boolean;
-	commentAnswerId?: number;
 }
