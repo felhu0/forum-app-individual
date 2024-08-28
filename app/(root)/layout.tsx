@@ -1,12 +1,12 @@
-import React from 'react'
+import React from 'react';
 
-const RootLayout = ({ children }: { children: React.ReactNode }) => {
+const PublicLayout = ({ children }: { children: React.ReactNode }) => {
     return (
         <div>
-            RootLayout
+            Threads Root Layout
             {children}
         </div>
-    )
-}
+    );
+};
 
-export default RootLayout
+export default PublicLayout;
