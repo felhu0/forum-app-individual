@@ -6,7 +6,6 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   updateProfile,
-  User,
   UserCredential,
 } from "firebase/auth";
 
@@ -18,6 +17,7 @@ import {
   useState,
 } from "react";
 import toast from "react-hot-toast";
+import { User } from "../types/user";
 
 type AuthValues = {
   email: string;
@@ -43,7 +43,17 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   // Check if there is a logged in user
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (_user) => {
-      setUser(_user);
+      if (_user) {
+        const user = {
+          id: _user.uid,
+          username: _user.displayName || "",
+          email: _user.email || "",
+          password: "",
+        };
+        setUser(user);
+      } else {
+        setUser(null);
+      }
       setAuthLoaded(true);
     });
 
@@ -70,7 +80,7 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
         displayName: `${values.firstName} ${values.lastName}`,
       });
 
-      setUser(userCredential.user);
+      setUser(user);
 
       toast.success("Account created successfully", { id: toastId });
 
