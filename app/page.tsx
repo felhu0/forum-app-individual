@@ -1,5 +1,4 @@
 
-
 const LandingPage = () => {
     return (
         <>
