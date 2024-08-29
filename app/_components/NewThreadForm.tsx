@@ -21,7 +21,8 @@ import { ComboBox } from './SelectCategoryNewThread';
 import { addDoc, collection, doc, getDoc, Timestamp } from 'firebase/firestore';
 import { db } from '@/firebase.config';
 import { useAuth } from './authProvider';
-import { ThreadCategory } from '../types/thread';
+import { Thread, ThreadCategory } from '../types/thread';
+import { createThread } from '@/lib/thread.db';
 
 
 const FormSchema = z.object({
@@ -45,34 +46,38 @@ export const NewThreadForm = () => {
         },
     });
 
-    async function onSubmit(data: z.infer<typeof FormSchema>) {
-        try {
-            const userDoc = await getDoc(doc(db, 'users', currentUser?.id!));
-            if (!userDoc.exists()) {
-                throw new Error('User not found');
-            }
 
-            const newThread = {
+    const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+
+        if (!currentUser) {
+            toast.error('You must be logged in to create a thread.');
+            return;
+        }
+
+        try {
+            const newThread: Thread = {
+                id: '',
+                creationDate: Timestamp.fromDate(new Date()),
+                comments: [],
                 title: data.threadTitle,
-                status: 'New',
-                category: data.threadCategory,
-                creationDate: Timestamp.now(),
+                category: data.threadCategory as ThreadCategory,
                 description: data.threadBody,
                 creator: {
-                    id: currentUser?.id,
-                    name: currentUser?.username
+                    id: currentUser.id,
+                    email: currentUser.email,
+                    username: currentUser.username,
                 },
-                comments: [],
             };
 
-            await addDoc(collection(db, 'threads'), newThread);
-            toast.success('Thread created successfully!');
+            await createThread(newThread);
+
             form.reset();
         } catch (error) {
             toast.error('Failed to create thread: ' + (error as Error).message);
             console.error('Error creating thread:', error);
         }
-    }
+    };
+
 
     return (
         <Form {...form}>

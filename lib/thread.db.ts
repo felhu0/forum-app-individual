@@ -6,23 +6,14 @@ import { Timestamp } from 'firebase/firestore';
 import { User } from '@/app/types/user';
 import { getUserById } from './user.db';
 
-type ThreadPropsList = {
-    title: string;
-    category: ThreadCategory;
-    creationDate: Timestamp;
-    description: string;
-    creator: User;
-    comments: Comment[];
-};
 
 export const getAllThreads = async (): Promise<Thread[]> => {
     try {
         const threadsCollection = collection(db, 'threads');
         const threadsSnapshot = await getDocs(threadsCollection);
         const threads: Thread[] = await Promise.all(threadsSnapshot.docs.map(async doc => {
-            const data = doc.data() as ThreadPropsList;
+            const data = doc.data() as Thread;
             const thread: Thread = {
-                id: doc.id,
                 ...data,
                 creationDate: Timestamp.fromDate(data.creationDate.toDate()),
                 comments: []
@@ -54,13 +45,11 @@ export const getThreadById = async (id: string): Promise<Thread | null> => {
     try {
         const threadDoc = await getDoc(doc(db, 'threads', id));
         if (!threadDoc.exists()) {
-            toast.error('Thread not found.');
             return null;
         }
 
-        const data = threadDoc.data() as ThreadPropsList;
+        const data = threadDoc.data() as Thread;
         const thread: Thread = {
-            id: threadDoc.id,
             ...data,
             creationDate: Timestamp.fromDate(data.creationDate.toDate()),
             comments: []
@@ -74,7 +63,7 @@ export const getThreadById = async (id: string): Promise<Thread | null> => {
                 return {
                     ...commentData,
                     creationDate: Timestamp.fromDate(commentData.creationDate.toDate()),
-                    user: commentData.creator.email 
+                    user: commentData.creator.email
                 };
             });
         }
@@ -86,35 +75,33 @@ export const getThreadById = async (id: string): Promise<Thread | null> => {
     }
 };
 
-export const createThread = async (newThread: Thread): Promise<string> => {
+export const createThread = async (data: Thread) => {
     try {
-
-        const user = await getUserById(newThread.creator.id);
-        if (!user) {
+        const userDoc = await getDoc(doc(db, 'users', data.creator.id));
+        if (!userDoc.exists()) {
             throw new Error('User not found');
         }
 
-        const threadData: ThreadPropsList = {
-            title: newThread.title,
-            category: newThread.category,
-            creationDate: Timestamp.fromDate(newThread.creationDate.toDate()),
-            description: newThread.description,
-            creator: user,
-            comments: []
-        }
+        const newThread = {
+            title: data.title,
+            status: 'New',
+            category: data.category,
+            creationDate: Timestamp.now(),
+            description: data.description,
+            creator: {
+                id: data.creator.id,
+                name: data.creator.username,
+            },
+            comments: [],
+        };
 
-        const docRef = await addDoc(collection(db, 'threads'), threadData);
-        const newThreadId = docRef.id;
-
-        toast.success('Thread created successfully!')
-
-        return newThreadId;
-
+        await addDoc(collection(db, 'threads'), newThread);
+        toast.success('Thread created successfully!');
     } catch (error) {
         toast.error('Failed to create thread: ' + (error as Error).message);
-        throw error;
+        console.error('Error creating thread:', error);
     }
-}
+};
 
 export const addCommentToThread = async (threadId: string, comment: Comment): Promise<void> => {
     try {
@@ -127,7 +114,7 @@ export const addCommentToThread = async (threadId: string, comment: Comment): Pr
         const threadDoc = await getDoc(threadDocRef);
 
         if (threadDoc.exists()) {
-            const threadData = threadDoc.data() as ThreadPropsList;
+            const threadData = threadDoc.data() as Thread;
             const updatedComments = [...threadData.comments, { ...comment, creator: { ...comment.creator, email: user.email } }];
 
             await updateDoc(threadDocRef, {
