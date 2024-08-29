@@ -1,7 +1,7 @@
 import { Timestamp } from "firebase/firestore";
 import { User } from "./user";
 
-type ThreadCategory = "NEW" | "HOT";
+export type ThreadCategory = "NEW" | "HOT";
 
 export type Comment = {
   id: string;
