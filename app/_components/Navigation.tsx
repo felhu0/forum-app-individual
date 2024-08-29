@@ -17,7 +17,7 @@ import {
     navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
 
-const menuItems: { title: string; href: string; description: string }[] = [
+const threadCategories: { title: string; href: string; description: string }[] = [
     {
         title: 'Software Development',
         href: '#',
@@ -55,15 +55,15 @@ export const Navigation = () => {
         <NavigationMenu className='w-full'>
             <NavigationMenuList>
                 <NavigationMenuItem>
-                    <NavigationMenuTrigger>Threads</NavigationMenuTrigger>
+                    <NavigationMenuTrigger>Threads by Category</NavigationMenuTrigger>
                     <NavigationMenuContent>
                         <ul className='grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] '>
-                            {menuItems.map((menuItem) => (
+                            {threadCategories.map((threadCategory) => (
                                 <ListItem
-                                    key={menuItem.title}
-                                    title={menuItem.title}
-                                    href={menuItem.href}>
-                                    {menuItem.description}
+                                    key={threadCategory.title}
+                                    title={threadCategory.title}
+                                    href={threadCategory.href}>
+                                    {threadCategory.description}
                                 </ListItem>
                             ))}
                         </ul>
