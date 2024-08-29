@@ -17,7 +17,6 @@ import {
     FormMessage,
 } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
-import toast from 'react-hot-toast';
 import { ComboBox } from './SelectCategoryNewThread';
 
 const FormSchema = z.object({
@@ -30,26 +29,29 @@ const FormSchema = z.object({
     threadCategory: z.string(),
 });
 
-export const NewThreadForm = () => {
-    const form = useForm<z.infer<typeof FormSchema>>({
+type NewThreadFormProps = {
+    onSubmit: (data: z.infer<typeof FormSchema>) => void;
+}
+
+const categoryOptions = [
+    'Software Development',
+    'Networking & Security',
+    'Hardware & Gadgets',
+    'Cloud Computing',
+    'Tech News & Trends'
+] as const;
+
+export const NewThreadForm = ({ onSubmit }: NewThreadFormProps) => {
+    const { control, handleSubmit, formState: { errors }} = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
     });
 
-    function onSubmit(data: z.infer<typeof FormSchema>) {
-        try {
-            toast.success('Thread created!');
-        } catch (error) {
-            toast.error('Failed to create thread: ' + (error as Error).message);
-        }
-    }
-
     return (
-        <Form {...form}>
             <form
-                onSubmit={form.handleSubmit(onSubmit)}
+                onSubmit={handleSubmit(onSubmit)}
                 className='mx-auto w-2/3 space-y-4 pl-12 py-12 max-w-3xl'>
                 <FormField
-                    control={form.control}
+                    control={control}
                     name='threadTitle'
                     render={({ field }) => (
                         <FormItem>
@@ -62,6 +64,7 @@ export const NewThreadForm = () => {
                             </FormDescription>
                             <FormControl>
                                 <Input
+                                    id='threadTitle'
                                     placeholder='Title'
                                     className='resize-none'
                                     {...field}
@@ -72,12 +75,13 @@ export const NewThreadForm = () => {
                     )}
                 />
                 <FormField
-                    control={form.control}
+                    control={control}
                     name='threadBody'
                     render={({ field }) => (
                         <FormItem>
                             <FormControl>
                                 <Textarea
+                                    id='threadBody'
                                     placeholder='Body'
                                     rows={5}
                                     className='resize-none'
@@ -88,19 +92,25 @@ export const NewThreadForm = () => {
                         </FormItem>
                     )}
                 />
-                <div className='flex items-center justify-between'>
-                    <FormField
-                        control={form.control}
-                        name='threadCategory'
-                        render={() => <ComboBox />}
-                    />
+                <FormItem
+                    control={control}
+                    name='threadCategory'
+                    render={({ field }) => (
+                    <div>
+                        <label htmlFor='threadCategory'>Category</label>
+                        <ComboBox
+                            value={field.value}
+                            onChange={(value) => field.onChange(value)}
+                        />
+                        {errors.threadCategory && <p>{errors.threadCategory.message}</p>}
+                    </div>
+                    )}
+                />
                     <Button
                         type='submit'
                         className='px-8'>
                         Submit
                     </Button>
-                </div>
             </form>
-        </Form>
     );
 };

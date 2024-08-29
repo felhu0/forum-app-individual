@@ -28,9 +28,14 @@ const categories: ThreadCategory[] = [
     'Tech News & Trends',
 ];
 
-export const ComboBox: React.FC = () => {
+type ComboBoxProps = {
+    value: ThreadCategory | '';
+    onChange: (value: ThreadCategory | '') => void;
+    onBlur?: () => void;
+};
+
+export const ComboBox: React.FC<ComboBoxProps> = ({ value, onChange, onBlur }) => {
     const [open, setOpen] = React.useState(false);
-    const [value, setValue] = React.useState<ThreadCategory | ''>('');
 
     return (
         <Popover
@@ -59,7 +64,7 @@ export const ComboBox: React.FC = () => {
                                     key={category}
                                     value={category}
                                     onSelect={(currentValue) => {
-                                        setValue(
+                                        onChange(
                                             currentValue === value
                                                 ? ''
                                                 : (currentValue as ThreadCategory)
