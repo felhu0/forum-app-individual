@@ -89,6 +89,14 @@ export const SignUpForm = () => {
                   required
                   {...form.register("firstName")}
                 />
+                {form.formState.errors.firstName && (
+                  <span className="text-error text-xs mt-[2px] flex gap-1 items-center">
+                    <MdErrorOutline />
+                    <span className="text-xs">
+                      {form.formState.errors.firstName.message}
+                    </span>
+                  </span>
+                )}
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="last-name">Last name</Label>
@@ -98,6 +106,14 @@ export const SignUpForm = () => {
                   required
                   {...form.register("lastName")}
                 />
+                {form.formState.errors.lastName && (
+                  <span className="text-error text-xs mt-[2px] flex gap-1 items-center">
+                    <MdErrorOutline />
+                    <span className="text-xs">
+                      {form.formState.errors.lastName.message}
+                    </span>
+                  </span>
+                )}
               </div>
             </div>
             <div className="grid gap-2">
@@ -109,6 +125,14 @@ export const SignUpForm = () => {
                 required
                 {...form.register("email")}
               />
+              {form.formState.errors.email && (
+                <span className="text-error text-xs mt-[2px] flex gap-1 items-center">
+                  <MdErrorOutline />
+                  <span className="text-xs">
+                    {form.formState.errors.email?.message}
+                  </span>
+                </span>
+              )}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="password">Password</Label>
@@ -117,6 +141,14 @@ export const SignUpForm = () => {
                 type="password"
                 {...form.register("password")}
               />
+              {form.formState.errors.password && (
+                <span className="text-error text-xs mt-[2px] flex gap-1 items-center">
+                  <MdErrorOutline />
+                  <span className="text-xs">
+                    {form.formState.errors.password.message}
+                  </span>
+                </span>
+              )}
             </div>
             <Button type="submit" className="w-full">
               Create an account
