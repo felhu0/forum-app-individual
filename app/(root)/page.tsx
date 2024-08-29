@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { ThreadTable } from '../_components/ThreadTable';
+import { LatestThreads } from '../_components/LatestThreads';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
 
@@ -23,7 +23,7 @@ const LandingPage = () => {
                         <span>Add new Thread</span>
                     </Button>
                 </Link>
-                <ThreadTable />
+                <LatestThreads />
             </main>
         </>
     );
