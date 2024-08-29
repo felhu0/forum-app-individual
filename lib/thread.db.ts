@@ -4,6 +4,7 @@ import { setDoc, doc, getDoc, deleteDoc, collection, getDocs, addDoc, updateDoc 
 import toast from 'react-hot-toast';
 import { Timestamp } from 'firebase/firestore'; 
 import { User } from '@/app/types/user';
+import { getUserById } from './user.db';
 
 type ThreadPropsList = {
     title: string;
@@ -113,24 +114,28 @@ export const createThread = async (newThread: Thread): Promise<string> => {
 
 export const addCommentToThread = async (threadId: string, comment: Comment): Promise<void> => {
     try {
+        const user = await getUserById(comment.creator.id);
+        if (!user) {
+            throw new Error('User not found');
+        }
+
         const threadDocRef = doc(db, 'threads', threadId);
         const threadDoc = await getDoc(threadDocRef);
 
-        if(threadDoc.exists()) {
+        if (threadDoc.exists()) {
             const threadData = threadDoc.data() as ThreadPropsList;
-            const updatedComments = [...threadData.comments, comment]
+            const updatedComments = [...threadData.comments, { ...comment, creator: { ...comment.creator, email: user.email } }];
 
             await updateDoc(threadDocRef, {
                 comments: updatedComments
-            })
-            toast.success('Comment added successfully!');
-        }
-        else {
-            toast.error('Thread not found')
+            });
+            toast.success(`Comment added successfully by ${user.email}!`);
+        } else {
+            toast.error('Thread not found');
         }
 
     } catch (error) {
         toast.error('Failed to add comment: ' + (error as Error).message);
         throw error;
     }
-}
+};
