@@ -4,13 +4,11 @@ import toast from 'react-hot-toast';
 import bcrypt from 'bcryptjs';
 import { User } from '@/app/types/user';
 
-
-
 export const addNewUser = async (user: User): Promise<void> => {
     try {
         const hashedPassword = await bcrypt.hash(user.password, 10);
 
-        await setDoc(doc(db, 'users', user.id.toString()), {
+        await setDoc(doc(db, 'users', user.id), {
             ...user,
             password: hashedPassword
         });
@@ -21,3 +19,17 @@ export const addNewUser = async (user: User): Promise<void> => {
         toast.error('Failed to add user: ' + (error as Error).message)
     }
 }
+
+export const getUserById = async (userId: string): Promise<User | null> => {
+    try {
+        const userDocRef = doc(db, 'users', userId);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+            return { id: userDoc.id, ...userDoc.data() } as User;
+        }
+        return null;
+    } catch (error) {
+        console.error('Failed to fetch user:', (error as Error).message);
+        return null;
+    }
+};
