@@ -2,9 +2,8 @@ import { Thread, ThreadCategory, Comment } from '@/app/types/thread';
 import { db } from '@/firebase.config';
 import { setDoc, doc, getDoc, deleteDoc, collection, getDocs, addDoc, updateDoc } from 'firebase/firestore';
 import toast from 'react-hot-toast';
-import { Timestamp } from 'firebase/firestore';
+import { Timestamp } from 'firebase/firestore'; 
 import { User } from '@/app/types/user';
-
 
 type ThreadPropsList = {
     title: string;
@@ -35,7 +34,8 @@ export const getAllThreads = async (): Promise<Thread[]> => {
                     const commentData = commentDoc.data() as Comment;
                     return {
                         ...commentData,
-                        creationDate: Timestamp.fromDate(commentData.creationDate.toDate())
+                        creationDate: Timestamp.fromDate(commentData.creationDate.toDate()),
+                        user: commentData.creator.email
                     };
                 });
             }
@@ -49,21 +49,36 @@ export const getAllThreads = async (): Promise<Thread[]> => {
     }
 };
 
-export const getThreadById = async (threadId: string): Promise<Thread | null> => {
+export const getThreadById = async (id: string): Promise<Thread | null> => {
     try {
-        const threadDoc = await getDoc(doc(db, 'threads', threadId));
-
-        if (threadDoc.exists()) {
-            const data = threadDoc.data() as ThreadPropsList;
-            return {
-                id: threadDoc.id,
-                ...data,
-                creationDate: Timestamp.fromDate(data.creationDate.toDate())
-            } as Thread;
-        } else {
-            toast.error('Thread not found');
+        const threadDoc = await getDoc(doc(db, 'threads', id));
+        if (!threadDoc.exists()) {
+            toast.error('Thread not found.');
             return null;
         }
+
+        const data = threadDoc.data() as ThreadPropsList;
+        const thread: Thread = {
+            id: threadDoc.id,
+            ...data,
+            creationDate: Timestamp.fromDate(data.creationDate.toDate()),
+            comments: []
+        };
+
+        const commentsCollection = collection(db, 'threads', id, 'comments');
+        const commentsSnapshot = await getDocs(commentsCollection);
+        if (!commentsSnapshot.empty) {
+            thread.comments = commentsSnapshot.docs.map(commentDoc => {
+                const commentData = commentDoc.data() as Comment;
+                return {
+                    ...commentData,
+                    creationDate: Timestamp.fromDate(commentData.creationDate.toDate()),
+                    user: commentData.creator.email 
+                };
+            });
+        }
+
+        return thread;
     } catch (error) {
         toast.error('Failed to fetch thread: ' + (error as Error).message);
         return null;
