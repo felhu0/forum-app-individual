@@ -16,42 +16,45 @@ import {
     NavigationMenuTrigger,
     navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
+import { useAuth } from './authProvider';
 
-const threadCategories: { title: string; href: string; description: string }[] =
-    [
-        {
-            title: 'Software Development',
-            href: '#',
-            description:
-                'Discussions on programming languages, development tools, and best practices.',
-        },
-        {
-            title: 'Networking & Security',
-            href: '#',
-            description:
-                'Topics related to network configuration and protection strategies.',
-        },
-        {
-            title: 'Hardware & Gadgets',
-            href: '#',
-            description:
-                'A space for sharing advice on building, upgrading, and troubleshooting hardware.',
-        },
-        {
-            title: 'Cloud Computing',
-            href: '#',
-            description:
-                'Conversations about cloud platforms, services, and architecture.',
-        },
-        {
-            title: 'Tech News & Trends',
-            href: '#',
-            description:
-                'Updates and discussions on the latest trends in the technology world.',
-        },
-    ];
+const threadCategories: { title: string; description: string }[] = [
+    {
+        title: 'Software Development',
+        description:
+            'Discussions on programming languages, development tools, and best practices.',
+    },
+    {
+        title: 'Networking & Security',
+        description:
+            'Topics related to network configuration and protection strategies.',
+    },
+    {
+        title: 'Hardware & Gadgets',
+        description:
+            'A space for sharing advice on building, upgrading, and troubleshooting hardware.',
+    },
+    {
+        title: 'Cloud Computing',
+        description:
+            'Conversations about cloud platforms, services, and architecture.',
+    },
+    {
+        title: 'Tech News & Trends',
+        description:
+            'Updates and discussions on the latest trends in the technology world.',
+    },
+];
 
 export const Navigation = () => {
+    const { user } = useAuth();
+
+    // Reformatting category titles for URL
+    const formattedCategory = threadCategories.map(
+        (category) =>
+            `/threads/${category.title.toLowerCase().replace(/ /g, '-')}/`
+    );
+
     return (
         <NavigationMenu className='w-full'>
             <NavigationMenuList>
@@ -61,13 +64,19 @@ export const Navigation = () => {
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
                         <ul className='grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] '>
-                            {threadCategories.map((threadCategory) => (
-                                <ListItem
-                                    key={threadCategory.title}
-                                    title={threadCategory.title}
-                                    href={threadCategory.href}>
-                                    {threadCategory.description}
-                                </ListItem>
+                            {threadCategories.map((threadCategory, i) => (
+                                <>
+                                    <Link
+                                        href={formattedCategory[i]}
+                                        key={i}>
+                                        <ListItem
+                                            key={threadCategory.title}
+                                            title={threadCategory.title}
+                                        >
+                                            {threadCategory.description}
+                                        </ListItem>
+                                    </Link>
+                                </>
                             ))}
                         </ul>
                     </NavigationMenuContent>
@@ -98,12 +107,20 @@ export const Navigation = () => {
                 </NavigationMenuItem>
             </NavigationMenuList>
             <div className='flex gap-4'>
-                <Link href='/log-in'>
-                    <Button variant='outline'>Log in</Button>
-                </Link>
-                <Link href='/sign-up'>
-                    <Button>Sign up</Button>
-                </Link>
+                {!user ? (
+                    <>
+                        <Link href='/log-in'>
+                            <Button variant='outline'>Log in</Button>
+                        </Link>
+                        <Link href='/sign-up'>
+                            <Button>Sign up</Button>
+                        </Link>{' '}
+                    </>
+                ) : (
+                    <Link href='/'>
+                        <Button>Log out</Button>
+                    </Link>
+                )}
             </div>
         </NavigationMenu>
     );
