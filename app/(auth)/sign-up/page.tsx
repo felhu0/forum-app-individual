@@ -1,9 +1,7 @@
-import React from 'react'
+import { SignUpForm } from '@/app/_components/SignUpForm';
 
 const SignUp = () => {
-    return (
-        <div>SignUp</div>
-    )
-}
+    return <SignUpForm />;
+};
 
-export default SignUp
+export default SignUp;
