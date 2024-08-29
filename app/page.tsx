@@ -1,4 +1,4 @@
-import ThreadsPage from './(root)/threads/page'
+
 
 const LandingPage = () => {
     return (
@@ -14,7 +14,7 @@ const LandingPage = () => {
                 </div>
             </header>
             <main className='px-6 my-8 max-w-6xl mx-auto'>
-              <ThreadsPage />
+                {/*Threads List*/}
             </main>
         </>
     );
