@@ -88,12 +88,18 @@ export const getThreadById = async (id: string): Promise<Thread | null> => {
 
 export const createThread = async (newThread: Thread): Promise<string> => {
     try {
+
+        const user = await getUserById(newThread.creator.id);
+        if (!user) {
+            throw new Error('User not found');
+        }
+
         const threadData: ThreadPropsList = {
             title: newThread.title,
             category: newThread.category,
             creationDate: Timestamp.fromDate(newThread.creationDate.toDate()),
             description: newThread.description,
-            creator: newThread.creator,
+            creator: user,
             comments: []
         }
 
