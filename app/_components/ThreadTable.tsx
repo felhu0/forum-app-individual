@@ -46,7 +46,7 @@ export type Thread = {
 export const ThreadTable = () => {
 
     return (
-        <div className='w-full'>
+        <div className='mx-auto w-full pl-12 px-6 my-8 max-w-6xl'>
             <div className='rounded-md border'>
                 <Table>
                     <TableHeader>

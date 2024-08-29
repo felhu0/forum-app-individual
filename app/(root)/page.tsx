@@ -1,4 +1,7 @@
-import { ThreadTable } from "../_components/ThreadTable";
+import { Button } from '@/components/ui/button';
+import { ThreadTable } from '../_components/ThreadTable';
+import { Plus } from 'lucide-react';
+import Link from 'next/link';
 
 const LandingPage = () => {
     return (
@@ -13,7 +16,13 @@ const LandingPage = () => {
                     </p>
                 </div>
             </header>
-            <main className='px-6 my-8 max-w-6xl mx-auto'>
+            <main className='mx-auto'>
+                <Link href='/threads/new'>
+                    <Button className='flex items-center gap-1 mx-auto pl-12 px-6 my-8 max-w-6xl' variant='outline'>
+                        <Plus className='size-4' />
+                        <span>Add new Thread</span>
+                    </Button>
+                </Link>
                 <ThreadTable />
             </main>
         </>
