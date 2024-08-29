@@ -6,7 +6,6 @@ import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-
 import {
     Form,
     FormControl,
@@ -19,9 +18,11 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import toast from 'react-hot-toast';
 import { ComboBox } from './SelectCategoryNewThread';
-import { addDoc, collection, Timestamp } from 'firebase/firestore';
+import { addDoc, collection, doc, getDoc, Timestamp } from 'firebase/firestore';
 import { db } from '@/firebase.config';
+import { useAuth } from './authProvider';
 import { ThreadCategory } from '../types/thread';
+
 
 const FormSchema = z.object({
     threadTitle: z.string().min(10, {
@@ -34,6 +35,7 @@ const FormSchema = z.object({
 });
 
 export const NewThreadForm = () => {
+    const { user: currentUser } = useAuth(); 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
@@ -44,25 +46,31 @@ export const NewThreadForm = () => {
     });
 
     async function onSubmit(data: z.infer<typeof FormSchema>) {
-        const newThread = {
-            title: data.threadTitle,
-            status: 'New',
-            category: data.threadCategory,
-            creationDate: Timestamp.now(),
-            description: data.threadBody,
-            // creator: {
-            //     // Add creator details here
-            //     id: 'user-id', // Replace with actual user ID
-            //     name: 'user-name', // Replace with actual user name
-            // },
-            // comments: [],
-        };
-        console.log(data, newThread);
         try {
+            const userDoc = await getDoc(doc(db, 'users', currentUser?.id!));
+            if (!userDoc.exists()) {
+                throw new Error('User not found');
+            }
+
+            const newThread = {
+                title: data.threadTitle,
+                status: 'New',
+                category: data.threadCategory,
+                creationDate: Timestamp.now(),
+                description: data.threadBody,
+                creator: {
+                    id: currentUser?.id,
+                    name: currentUser?.username
+                },
+                comments: [],
+            };
+
             await addDoc(collection(db, 'threads'), newThread);
-            toast.success('Thread created!');
+            toast.success('Thread created successfully!');
+            form.reset();
         } catch (error) {
             toast.error('Failed to create thread: ' + (error as Error).message);
+            console.error('Error creating thread:', error);
         }
     }
 
