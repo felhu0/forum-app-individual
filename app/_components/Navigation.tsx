@@ -17,45 +17,48 @@ import {
     navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
 
-const threadCategories: { title: string; href: string; description: string }[] = [
-    {
-        title: 'Software Development',
-        href: '#',
-        description:
-            'Discussions on programming languages, development tools, and best practices.',
-    },
-    {
-        title: 'Networking & Security',
-        href: '#',
-        description:
-            'Topics related to network configuration and protection strategies.',
-    },
-    {
-        title: 'Hardware & Gadgets',
-        href: '#',
-        description:
-            'A space for sharing advice on building, upgrading, and troubleshooting hardware.',
-    },
-    {
-        title: 'Cloud Computing',
-        href: '#',
-        description:
-            'Conversations about cloud platforms, services, and architecture.',
-    },
-    {
-        title: 'Tech News & Trends',
-        href: '#',
-        description:
-            'Updates and discussions on the latest trends in the technology world.',
-    },
-];
+const threadCategories: { title: string; href: string; description: string }[] =
+    [
+        {
+            title: 'Software Development',
+            href: '#',
+            description:
+                'Discussions on programming languages, development tools, and best practices.',
+        },
+        {
+            title: 'Networking & Security',
+            href: '#',
+            description:
+                'Topics related to network configuration and protection strategies.',
+        },
+        {
+            title: 'Hardware & Gadgets',
+            href: '#',
+            description:
+                'A space for sharing advice on building, upgrading, and troubleshooting hardware.',
+        },
+        {
+            title: 'Cloud Computing',
+            href: '#',
+            description:
+                'Conversations about cloud platforms, services, and architecture.',
+        },
+        {
+            title: 'Tech News & Trends',
+            href: '#',
+            description:
+                'Updates and discussions on the latest trends in the technology world.',
+        },
+    ];
 
 export const Navigation = () => {
     return (
         <NavigationMenu className='w-full'>
             <NavigationMenuList>
                 <NavigationMenuItem>
-                    <NavigationMenuTrigger>Threads by Category</NavigationMenuTrigger>
+                    <NavigationMenuTrigger>
+                        Threads by Category
+                    </NavigationMenuTrigger>
                     <NavigationMenuContent>
                         <ul className='grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] '>
                             {threadCategories.map((threadCategory) => (
@@ -95,8 +98,12 @@ export const Navigation = () => {
                 </NavigationMenuItem>
             </NavigationMenuList>
             <div className='flex gap-4'>
-                <Button variant='outline'>Log in</Button>
-                <Button>Sign up</Button>
+                <Link href='/log-in'>
+                    <Button variant='outline'>Log in</Button>
+                </Link>
+                <Link href='/sign-up'>
+                    <Button>Sign up</Button>
+                </Link>
             </div>
         </NavigationMenu>
     );

@@ -1,23 +1,13 @@
+import PublicLayout from './(root)/layout';
+import LandingPage from './(root)/page';
 
-
-const LandingPage = () => {
+const IndexPage = () => {
     return (
-        <>
-            <header className='bg-slate-300'>
-                <div className='pl-12 py-8 max-w-6xl mx-auto'>
-                    <h1 className='text-base font-medium'>
-                        Welcome to Threads
-                    </h1>
-                    <p className='text-sm text-muted-foreground'>
-                        A community of developers
-                    </p>
-                </div>
-            </header>
-            <main className='px-6 my-8 max-w-6xl mx-auto'>
-                {/*Threads List*/}
-            </main>
-        </>
+        <PublicLayout>
+            {/* Main root content, outside of the landing page */}
+            <LandingPage />
+        </PublicLayout>
     );
 };
 
-export default LandingPage;
+export default IndexPage;
