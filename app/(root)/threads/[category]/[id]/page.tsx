@@ -1,41 +1,55 @@
 'use client';
 
-import { useAuth } from '@/app/_components/authProvider';
+import { useEffect, useState } from 'react';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { getThreadById } from '@/lib/thread.db';
+
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+
+
 import { Comments } from '@/app/_components/Comments';
 import { NewCommentForm } from '@/app/_components/NewCommentForm';
-import { Thread } from '@/app/types/thread';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
-import { getThreadById } from '@/lib/thread.db';
-import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { Thread, Comment } from '@/app/types/thread';
+
+type Params = {
+    id: string
+}
+
 
 const ThreadDetailsPage = () => {
-    const { id } = useParams() as { id: string };
-    const { user } = useAuth();
-
     const [thread, setThread] = useState<Thread | null>(null);
+    const [comments, setComments] = useState<Comment[]>([]);
+    const router = useRouter();
+    const { id } = useParams<Params>();
 
     useEffect(() => {
         const fetchThread = async () => {
             if (id) {
                 const fetchedThread = await getThreadById(id);
-                setThread(fetchedThread);
+                if (fetchedThread) {
+                    setThread(fetchedThread);
+                    setComments(fetchedThread.comments);
+                } else {
+                    console.log('No thread found with the given ID.');
+                    router.push('/404');
+                }
+            } else {
+                console.log('ID is not available in search parameters.');
             }
         };
 
         fetchThread();
     }, [id]);
 
+    const handleCommentSubmit = async (newComment: Comment) => {
+        if (thread) {
+            setComments([...comments, newComment]);
+        }
+    };
+
     if (!thread) {
         return (
-            <div className='flex pt-16 text-center justify-center max-auto text-lg font-medium'>
+            <div className='flex pt-16 text-center justify-center mx-auto text-lg font-medium'>
                 Loading...
             </div>
         );
@@ -63,14 +77,13 @@ const ThreadDetailsPage = () => {
             </div>
             <div className='mx-auto w-full pl-12 px-6 my-8 max-w-6xl'>
                 <div className='rounded-md border'>
-                    <Comments />
+                    <Comments comments={comments} />
                 </div>
             </div>
-            {user && (
-                <div className='w-full pl-12 px-6 py-8 relative bottom-0 bg-slate-200'>
-                    <div className='mx-auto max-w-3xl'>
-                        <NewCommentForm id={thread.id} />
-                    </div>
+            <div className='w-full pl-12 px-6 py-8 absolute bottom-0 bg-slate-200'>
+                <div className='mx-auto max-w-3xl'>
+                    <NewCommentForm id={thread.id} onCommentSubmit={handleCommentSubmit} />
+
                 </div>
             )}
         </>

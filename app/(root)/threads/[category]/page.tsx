@@ -6,7 +6,7 @@ import { useParams } from 'next/navigation';
 
 const CategoryPage = () => {
     const { category } = useParams();
-
+    console.log('Current category ID:', category);
     return <ThreadsByCategory currentCategory={category as ThreadCategory} />;
 };
 

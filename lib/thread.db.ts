@@ -45,6 +45,7 @@ export const getThreadById = async (id: string): Promise<Thread | null> => {
     try {
         const threadDoc = await getDoc(doc(db, 'threads', id));
         if (!threadDoc.exists()) {
+            console.log(`Thread with ID ${id} does not exist.`);
             return null;
         }
 
@@ -53,25 +54,20 @@ export const getThreadById = async (id: string): Promise<Thread | null> => {
             ...data,
             id,
             creationDate: Timestamp.fromDate(data.creationDate.toDate()),
-            comments: []
+            comments: data.comments ? data.comments.map((comment: Comment, index: number) => ({
+                ...comment,
+                id: comment.id || `${id}-${index}`,
+                creationDate: Timestamp.fromDate(comment.creationDate.toDate()),
+                user: comment.creator.email
+            })) : []
         };
 
-        const commentsCollection = collection(db, 'threads', id, 'comments');
-        const commentsSnapshot = await getDocs(commentsCollection);
-        if (!commentsSnapshot.empty) {
-            thread.comments = commentsSnapshot.docs.map(commentDoc => {
-                const commentData = commentDoc.data() as Comment;
-                return {
-                    ...commentData,
-                    creationDate: Timestamp.fromDate(commentData.creationDate.toDate()),
-                    user: commentData.creator.email
-                };
-            });
-        }
+        console.log(`Fetched ${thread.comments.length} comments for thread ID ${id}.`);
 
         return thread;
     } catch (error) {
         toast.error('Failed to fetch thread: ' + (error as Error).message);
+        console.error('Error fetching thread:', error);
         return null;
     }
 };
@@ -104,7 +100,7 @@ export const createThread = async (data: Thread) => {
     }
 };
 
-export const addCommentToThread = async (threadId: string, comment: Comment): Promise<void> => {
+export const addCommentToThread = async (threadId: string, comment: Comment): Promise<Comment> => {
     try {
         const user = await getUserById(comment.creator.id);
         if (!user) {
@@ -116,18 +112,42 @@ export const addCommentToThread = async (threadId: string, comment: Comment): Pr
 
         if (threadDoc.exists()) {
             const threadData = threadDoc.data() as Thread;
-            const updatedComments = [...threadData.comments, { ...comment, creator: { ...comment.creator, email: user.email } }];
+            const updatedComment = { ...comment, creator: { ...comment.creator, email: user.email } };
+            const updatedComments = [...threadData.comments, updatedComment];
 
             await updateDoc(threadDocRef, {
                 comments: updatedComments
             });
-            toast.success(`Comment added successfully by ${user.email}!`);
+            toast.success('Comment added successfully!');
+            return updatedComment;
         } else {
-            toast.error('Thread not found');
+            throw new Error('Thread not found');
         }
-
     } catch (error) {
         toast.error('Failed to add comment: ' + (error as Error).message);
-        throw error;
+        throw new Error('Failed to add comment: ' + (error as Error).message);
+    }
+};
+
+export const getCommentsByThreadId = async (threadId: string): Promise<Comment[]> => {
+    try {
+        const commentsCollection = collection(db, 'threads', threadId, 'comments');
+        const commentsSnapshot = await getDocs(commentsCollection);
+        if (commentsSnapshot.empty) {
+            return [];
+        }
+
+        const comments: Comment[] = commentsSnapshot.docs.map(commentDoc => {
+            const commentData = commentDoc.data() as Comment;
+            return {
+                ...commentData,
+                creationDate: Timestamp.fromDate(commentData.creationDate.toDate()),
+            };
+        });
+
+        return comments;
+    } catch (error) {
+        console.error('Failed to fetch comments:', error);
+        return [];
     }
 };
