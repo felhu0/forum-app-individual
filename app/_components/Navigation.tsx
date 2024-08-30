@@ -78,6 +78,17 @@ export const Navigation = () => {
     return (
         <NavigationMenu className='w-full'>
             <NavigationMenuList>
+            <NavigationMenuItem>
+                    <Link
+                        href='/'
+                        legacyBehavior
+                        passHref>
+                        <NavigationMenuLink
+                            className={navigationMenuTriggerStyle()}>
+                            Home
+                        </NavigationMenuLink>
+                    </Link>
+                </NavigationMenuItem>
                 <NavigationMenuItem>
                     <NavigationMenuTrigger>
                         Threads by Category
@@ -88,6 +99,7 @@ export const Navigation = () => {
                                 <ListItem
                                     key={threadCategory.title}
                                     title={threadCategory.title}
+                                    className='cursor-pointer'
                                     onClick={() =>
                                         handleRedirect(threadCategory.title)
                                     }>
