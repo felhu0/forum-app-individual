@@ -57,8 +57,10 @@ const ThreadDetailsPage = () => {
                     </Table>
                 </div>
             </div>
-            <div>
-                <Comments />
+            <div className='mx-auto w-full pl-12 px-6 my-8 max-w-6xl'>
+                <div className='rounded-md border'>
+                    <Comments />
+                </div>
             </div>
             <div className='w-full pl-12 px-6 py-8 absolute bottom-0 bg-slate-200'>
                 <div className='mx-auto max-w-3xl'>
