@@ -1,5 +1,9 @@
 'use client';
 
+import { useRouter } from 'next/navigation'; // Import useRouter from next/navigation
+import { useEffect, useState } from 'react';
+import { Thread } from '../types/thread';
+import { getAllThreads } from '@/lib/thread.db';
 import {
     Table,
     TableBody,
@@ -9,41 +13,23 @@ import {
     TableRow,
 } from '@/components/ui/table';
 
-const threadData: Thread[] = [
-    {
-        id: 1,
-        title: 'Best Practices for Managing State in React?',
-        category: 'Software Development',
-    },
-    {
-        id: 2,
-        title: 'Struggling with Setting Up a VPN on My Home Network',
-        category: 'Networking & Security',
-    },
-    {
-        id: 3,
-        title: 'Is It Worth Upgrading to DDR5 RAM for Gaming?',
-        category: 'Hardware & Gadgets',
-    },
-    {
-        id: 4,
-        title: 'AWS vs. Google Cloud for Machine Learning Projects?',
-        category: 'Cloud Computing',
-    },
-    {
-        id: 5,
-        title: 'Thoughts on Apples Latest Vision Pro Release?',
-        category: 'Tech News & Trends',
-    },
-];
 
-export type Thread = {
-    id: number;
-    title: string;
-    category: string;
-};
+export const ThreadTable = () => {
+    const [threads, setThreads] = useState<Thread[]>([]);
+    const router = useRouter();
 
-export const LatestThreads = () => {
+    useEffect(() => {
+        const fetchThreads = async () => {
+            const data: Thread[] = await getAllThreads();
+            setThreads(data);
+        };
+
+        fetchThreads();
+    }, []);
+
+    const handleRowClick = (threadId: string) => {
+        router.push(`/threads/${threadId}`);
+    };
 
     return (
         <div className='mx-auto w-full pl-12 px-6 my-8 max-w-6xl'>
@@ -55,9 +41,9 @@ export const LatestThreads = () => {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {threadData.length ? (
-                            threadData.map((thread) => (
-                                <TableRow key={thread.id}>
+                        {threads.length ? (
+                            threads.map((thread) => (
+                                <TableRow key={thread.id} onClick={() => handleRowClick(thread.id)} className="cursor-pointer">
                                     <TableCell>
                                         <div>
                                             {thread.title}
@@ -75,9 +61,7 @@ export const LatestThreads = () => {
                             ))
                         ) : (
                             <TableRow>
-                                <TableCell
-                                    colSpan={2}
-                                    className='h-24 text-center'>
+                                <TableCell colSpan={2} className='h-24 text-center'>
                                     No threads found.
                                 </TableCell>
                             </TableRow>
