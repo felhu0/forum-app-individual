@@ -22,7 +22,7 @@ import { Timestamp } from 'firebase/firestore';
 import { useAuth } from './authProvider';
 import { Textarea } from '@/components/ui/textarea';
 
-export const CommentsForm: React.FC<{ id: string }> = ({ id }) => {
+export const NewCommentForm: React.FC<{ id: string }> = ({ id }) => {
 
     const { user: currentUser } = useAuth();
 

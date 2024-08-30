@@ -1,6 +1,7 @@
 'use client';
 
-import { CommentsForm } from '@/app/_components/CommentsForm';
+import { Comments } from '@/app/_components/Comments';
+import { NewCommentForm } from '@/app/_components/NewCommentForm';
 import { Thread } from '@/app/types/thread';
 import {
     Table,
@@ -56,9 +57,12 @@ const ThreadDetailsPage = () => {
                     </Table>
                 </div>
             </div>
+            <div>
+                <Comments />
+            </div>
             <div className='w-full pl-12 px-6 py-8 absolute bottom-0 bg-slate-200'>
                 <div className='mx-auto max-w-3xl'>
-                    <CommentsForm id={thread.id} />
+                    <NewCommentForm id={thread.id} />
                 </div>
             </div>
         </>
