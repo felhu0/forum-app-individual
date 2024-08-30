@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/navigation'; // Import useRouter from next/navigation
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Thread } from '../types/thread';
 import { getAllThreads } from '@/lib/thread.db';
@@ -13,8 +13,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 
-
-export const ThreadTable = () => {
+export const LatestThreads = () => {
     const [threads, setThreads] = useState<Thread[]>([]);
     const router = useRouter();
 
@@ -43,7 +42,10 @@ export const ThreadTable = () => {
                     <TableBody>
                         {threads.length ? (
                             threads.map((thread) => (
-                                <TableRow key={thread.id} onClick={() => handleRowClick(thread.id)} className="cursor-pointer">
+                                <TableRow
+                                    key={thread.id}
+                                    onClick={() => handleRowClick(thread.id)}
+                                    className='cursor-pointer'>
                                     <TableCell>
                                         <div>
                                             {thread.title}
@@ -61,7 +63,9 @@ export const ThreadTable = () => {
                             ))
                         ) : (
                             <TableRow>
-                                <TableCell colSpan={2} className='h-24 text-center'>
+                                <TableCell
+                                    colSpan={2}
+                                    className='h-24 text-center'>
                                     No threads found.
                                 </TableCell>
                             </TableRow>
