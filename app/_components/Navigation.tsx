@@ -17,6 +17,8 @@ import {
     navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
 import { useAuth } from './authProvider';
+import { formatCategory } from '@/lib/formattingCategoryForURL';
+import { useRouter } from 'next/navigation';
 
 const threadCategories: { title: string; description: string }[] = [
     {
@@ -47,13 +49,13 @@ const threadCategories: { title: string; description: string }[] = [
 ];
 
 export const Navigation = () => {
+    const router = useRouter();
     const { user } = useAuth();
 
-    // Reformatting category titles for URL
-    const formattedCategory = threadCategories.map(
-        (category) =>
-            `/threads/${category.title.toLowerCase().replace(/ /g, '-')}/`
-    );
+    const handleRedirect = (category: string) => {
+        const formattedCategory = formatCategory(category);
+        router.push(`/threads/${formattedCategory}/`);
+    };
 
     return (
         <NavigationMenu className='w-full'>
@@ -64,18 +66,18 @@ export const Navigation = () => {
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
                         <ul className='grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] '>
-                            {threadCategories.map((threadCategory, i) => (
+                            {threadCategories.map((threadCategory) => (
                                 <>
-                                    <Link
-                                        href={formattedCategory[i]}
-                                        key={i}>
-                                        <ListItem
-                                            key={threadCategory.title}
-                                            title={threadCategory.title}
-                                        >
-                                            {threadCategory.description}
-                                        </ListItem>
-                                    </Link>
+                                    <ListItem
+                                        key={threadCategory.title}
+                                        title={threadCategory.title}
+                                        onClick={() =>
+                                            handleRedirect(
+                                                threadCategory.title
+                                            )
+                                        }>
+                                        {threadCategory.description}
+                                    </ListItem>
                                 </>
                             ))}
                         </ul>
