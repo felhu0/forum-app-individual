@@ -22,6 +22,7 @@ import { Timestamp } from 'firebase/firestore';
 import { useAuth } from './authProvider';
 
 export const CommentsForm: React.FC<{ id: string }> = ({ id }) => {
+  console.log(id)
     const { user: currentUser } = useAuth();
 
     const FormSchema = z.object({
