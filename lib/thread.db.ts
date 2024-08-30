@@ -3,7 +3,6 @@ import { db } from '@/firebase.config';
 import { setDoc, doc, getDoc, deleteDoc, collection, getDocs, addDoc, updateDoc } from 'firebase/firestore';
 import toast from 'react-hot-toast';
 import { Timestamp } from 'firebase/firestore'; 
-import { User } from '@/app/types/user';
 import { getUserById } from './user.db';
 
 
@@ -15,6 +14,7 @@ export const getAllThreads = async (): Promise<Thread[]> => {
             const data = doc.data() as Thread;
             const thread: Thread = {
                 ...data,
+                id: doc.id,
                 creationDate: Timestamp.fromDate(data.creationDate.toDate()),
                 comments: []
             };
@@ -51,6 +51,7 @@ export const getThreadById = async (id: string): Promise<Thread | null> => {
         const data = threadDoc.data() as Thread;
         const thread: Thread = {
             ...data,
+            id,
             creationDate: Timestamp.fromDate(data.creationDate.toDate()),
             comments: []
         };
