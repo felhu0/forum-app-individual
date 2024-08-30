@@ -6,8 +6,10 @@ import { User } from '@/app/types/user';
 
 export const addNewUser = async (user: User): Promise<void> => {
     try {
-        const hashedPassword = await bcrypt.hash(user.password, 10);
+        const salt = await bcrypt.genSalt(10);
 
+        const hashedPassword = await bcrypt.hash(user.password || '', salt);
+        
         await setDoc(doc(db, 'users', user.id), {
             ...user,
             password: hashedPassword
