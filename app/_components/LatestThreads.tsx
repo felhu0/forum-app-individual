@@ -12,6 +12,8 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { formatCategory } from '@/lib/formattingCategoryForURL';
+
 
 export const LatestThreads = () => {
     const [threads, setThreads] = useState<Thread[]>([]);
@@ -26,8 +28,10 @@ export const LatestThreads = () => {
         fetchThreads();
     }, []);
 
-    const handleRowClick = (threadId: string) => {
-        router.push(`/threads/${threadId}`);
+
+    const handleRowClick = (threadId: string, category: string) => {
+        const formattedCategory = formatCategory(category);
+        router.push(`/threads/${formattedCategory}/${threadId}`);
     };
 
     return (
@@ -44,7 +48,12 @@ export const LatestThreads = () => {
                             threads.map((thread) => (
                                 <TableRow
                                     key={thread.id}
-                                    onClick={() => handleRowClick(thread.id)}
+                                    onClick={() =>
+                                        handleRowClick(
+                                            thread.id,
+                                            thread.category
+                                        )
+                                    }
                                     className='cursor-pointer'>
                                     <TableCell>
                                         <div>
