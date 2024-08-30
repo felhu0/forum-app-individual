@@ -19,6 +19,8 @@ import {
 import { useAuth } from "./authProvider";
 import { formatCategory } from "@/lib/formattingCategoryForURL";
 import { useRouter } from "next/navigation";
+import { auth } from "@/firebase.config";
+import { signOut } from "firebase/auth";
 
 const threadCategories: { title: string; description: string }[] = [
   {
@@ -63,6 +65,15 @@ export const Navigation = () => {
       .map((n) => n[0])
       .join("")
       .toUpperCase();
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      router.push("/");
+    } catch (error) {
+      console.error("Could not log out", error);
+    }
   };
   return (
     <NavigationMenu className="w-full">
@@ -116,7 +127,7 @@ export const Navigation = () => {
               {getInitials(user.username)}
             </span>
             <Link href="/">
-              <Button>Log out</Button>
+              <Button onClick={handleLogout}>Log out</Button>
             </Link>
           </div>
         )}
