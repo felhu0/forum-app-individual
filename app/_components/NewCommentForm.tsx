@@ -23,7 +23,6 @@ import { useAuth } from './authProvider';
 import { Textarea } from '@/components/ui/textarea';
 
 export const NewCommentForm: React.FC<{ id: string }> = ({ id }) => {
-
     const { user: currentUser } = useAuth();
 
     const FormSchema = z.object({
@@ -70,13 +69,13 @@ export const NewCommentForm: React.FC<{ id: string }> = ({ id }) => {
         <Form {...form}>
             <form
                 onSubmit={form.handleSubmit(onSubmit)}
-                className='space-y-4'>
+                className='space-y-8 my-4'>
                 <FormField
                     control={form.control}
                     name='commentBody'
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel className='text-lg'>
+                            <FormLabel className='text-lg  pl-1 underline underline-offset-4'>
                                 Write Comment
                             </FormLabel>
                             <FormControl>

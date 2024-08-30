@@ -12,7 +12,7 @@ import { Thread, ThreadCategory } from '../types/thread';
 import { getAllThreads } from '@/lib/thread.db';
 import { useState, useEffect } from 'react';
 import { formatCategory } from '@/lib/formatCategory';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 type ThreadsByCategoryProps = {
     currentCategory: ThreadCategory;
@@ -21,7 +21,6 @@ type ThreadsByCategoryProps = {
 export const ThreadsByCategory = ({
     currentCategory,
 }: ThreadsByCategoryProps) => {
-    const router = useRouter();
     const category = formatCategory(currentCategory);
 
     const [threads, setThreads] = useState<Thread[]>([]);
@@ -53,10 +52,6 @@ export const ThreadsByCategory = ({
         );
     }
 
-    const handleRedirect = (threadId: string) => {
-        router.push(`/threads/${currentCategory}/${threadId}`);
-    }
-
     return (
         <div className='mx-auto w-full pl-12 px-6 my-8 max-w-6xl'>
             <div className='rounded-md border'>
@@ -72,16 +67,19 @@ export const ThreadsByCategory = ({
                     <TableBody>
                         {threads.length > 0 ? (
                             threads.map((thread) => (
-                                <TableRow key={thread.id} onClick={() => handleRedirect}>
+                                <TableRow key={thread.id}>
                                     <TableCell>
-                                        <div>
-                                            {thread.title}
-                                            <div className='flex gap-1 mt-1 items-center'>
-                                                <span className='text-xs text-muted-foreground truncate'>
-                                                    {thread.description}
-                                                </span>
+                                        <Link
+                                            href={`/threads/${currentCategory}/${thread.id}`}>
+                                            <div>
+                                                {thread.title}
+                                                <div className='flex gap-1 mt-1 items-center'>
+                                                    <span className='text-xs text-muted-foreground truncate'>
+                                                        {thread.description}
+                                                    </span>
+                                                </div>
                                             </div>
-                                        </div>
+                                        </Link>
                                     </TableCell>
                                 </TableRow>
                             ))

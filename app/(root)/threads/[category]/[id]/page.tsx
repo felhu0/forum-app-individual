@@ -1,5 +1,6 @@
 'use client';
 
+import { useAuth } from '@/app/_components/authProvider';
 import { Comments } from '@/app/_components/Comments';
 import { NewCommentForm } from '@/app/_components/NewCommentForm';
 import { Thread } from '@/app/types/thread';
@@ -17,6 +18,7 @@ import { useEffect, useState } from 'react';
 
 const ThreadDetailsPage = () => {
     const { id } = useParams() as { id: string };
+    const { user } = useAuth();
 
     const [thread, setThread] = useState<Thread | null>(null);
 
@@ -41,12 +43,14 @@ const ThreadDetailsPage = () => {
 
     return (
         <>
-            <div className='w-full mx-auto pl-12 px-6 max-w-6xl my-6'>
+            <div className='w-full mx-auto pl-12 px-6 max-w-6xl my-8 pt-6'>
                 <div className='rounded-md border'>
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Thread {thread.title}</TableHead>
+                                <TableHead className='text-foreground text-lg p-4 bg-stone-50'>
+                                    {thread.title}
+                                </TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -62,11 +66,13 @@ const ThreadDetailsPage = () => {
                     <Comments />
                 </div>
             </div>
-            <div className='w-full pl-12 px-6 py-8 absolute bottom-0 bg-slate-200'>
-                <div className='mx-auto max-w-3xl'>
-                    <NewCommentForm id={thread.id} />
+            {user && (
+                <div className='w-full pl-12 px-6 py-8 relative bottom-0 bg-slate-200'>
+                    <div className='mx-auto max-w-3xl'>
+                        <NewCommentForm id={thread.id} />
+                    </div>
                 </div>
-            </div>
+            )}
         </>
     );
 };
