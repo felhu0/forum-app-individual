@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Thread } from '../types/thread';
-import { getAllThreads } from '@/lib/thread.db';
+import { getAllThreads, getThreadById } from '@/lib/thread.db';
 import {
     Table,
     TableBody,
@@ -29,9 +29,19 @@ export const LatestThreads = () => {
     }, []);
 
 
-    const handleRowClick = (threadId: string, category: string) => {
-        const formattedCategory = formatCategory(category);
-        router.push(`/threads/${formattedCategory}/${threadId}`);
+    
+    const handleRowClick = async (threadId: string, category: string) => {
+        try {
+            const thread = await getThreadById(threadId);
+            if (thread) {
+                const formattedCategory = formatCategory(category);
+                router.push(`/threads/${formattedCategory}/${threadId}`);
+            } else {
+                console.error('Thread not found');
+            }
+        } catch (error) {
+            console.error('Error fetching thread:', error);
+        }
     };
 
     return (

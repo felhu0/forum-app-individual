@@ -8,22 +8,24 @@ import { Button } from '@/components/ui/button';
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
     FormMessage,
 } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Comment, Thread } from '../types/thread';
+import { Comment } from '../types/thread';
 import { addCommentToThread } from '@/lib/thread.db';
 import toast from 'react-hot-toast';
 import { Timestamp } from 'firebase/firestore';
 import { useAuth } from './authProvider';
 import { Textarea } from '@/components/ui/textarea';
 
-export const NewCommentForm: React.FC<{ id: string }> = ({ id }) => {
+type NewCommentFormProps = {
+    id: string;
+    onCommentSubmit: (comment: Comment) => void; 
+};
 
+export const NewCommentForm: React.FC<NewCommentFormProps> = ({ id, onCommentSubmit }) => {
     const { user: currentUser } = useAuth();
 
     const FormSchema = z.object({
@@ -52,49 +54,38 @@ export const NewCommentForm: React.FC<{ id: string }> = ({ id }) => {
                 creationDate: Timestamp.now(),
                 creator: {
                     id: currentUser.id,
-                    email: currentUser.email,
                     username: currentUser.username,
+                    email: currentUser.email
                 },
             };
 
             await addCommentToThread(id, newComment);
-
+            
             form.reset();
+            onCommentSubmit(newComment); // Pass the new comment to the callback
+            return newComment; // Return the new comment
         } catch (error) {
-            toast.error('Failed to create thread: ' + (error as Error).message);
-            console.error('Error creating thread:', error);
+            toast.error('Failed to add comment.');
         }
     };
 
     return (
         <Form {...form}>
-            <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className='space-y-4'>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
                 <FormField
+                    name="commentBody"
                     control={form.control}
-                    name='commentBody'
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel className='text-lg'>
-                                Write Comment
-                            </FormLabel>
+                            <FormLabel>Comment</FormLabel>
                             <FormControl>
-                                <Textarea
-                                    placeholder='Write your comment here...'
-                                    rows={6}
-                                    {...field}
-                                />
+                                <Textarea placeholder="Write your comment..." {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
-                <Button
-                    type='submit'
-                    className='px-8'>
-                    Add Comment
-                </Button>
+                <Button type="submit">Submit</Button>
             </form>
         </Form>
     );

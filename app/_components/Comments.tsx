@@ -8,8 +8,13 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { Comment } from '../types/thread';
 
-export const Comments = () => {
+type CommentsProps = {
+    comments: Comment[]
+}
+
+export const Comments: React.FC<CommentsProps> = ({ comments = [] }) => {
     return (
         <Table>
             <TableHeader>
@@ -18,10 +23,18 @@ export const Comments = () => {
                 </TableRow>
             </TableHeader>
             <TableBody>
-                <TableRow>
-                    <TableCell>Kommentarer här</TableCell>
-                </TableRow>
+                {comments.map((comment) => {
+                    return (
+                        <TableRow key={comment.id}>
+                            <TableCell>{comment.content}</TableCell>
+                            <TableCell>
+                                <small>By {comment.creator?.username} on {comment.creationDate.toDate().toLocaleString()}</small>
+                            </TableCell>
+                        </TableRow>
+                    );
+                })}
             </TableBody>
         </Table>
     );
 };
+
