@@ -20,12 +20,14 @@ import { Timestamp } from 'firebase/firestore';
 import { useAuth } from './authProvider';
 import { Textarea } from '@/components/ui/textarea';
 
+
 type NewCommentFormProps = {
     id: string;
     onCommentSubmit: (comment: Comment) => void; 
 };
 
 export const NewCommentForm: React.FC<NewCommentFormProps> = ({ id, onCommentSubmit }) => {
+
     const { user: currentUser } = useAuth();
 
     const FormSchema = z.object({
@@ -71,12 +73,12 @@ export const NewCommentForm: React.FC<NewCommentFormProps> = ({ id, onCommentSub
 
     return (
         <Form {...form}>
+
             <form onSubmit={form.handleSubmit(onSubmit)}>
-                <FormField
-                    name="commentBody"
-                    control={form.control}
-                    render={({ field }) => (
-                        <FormItem>
+
+            <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className='space-y-8 my-4'>
                             <FormLabel>Comment</FormLabel>
                             <FormControl>
                                 <Textarea placeholder="Write your comment..." {...field} />

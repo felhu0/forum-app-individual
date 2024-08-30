@@ -15,11 +15,12 @@ type CommentsProps = {
 }
 
 export const Comments: React.FC<CommentsProps> = ({ comments = [] }) => {
+
     return (
         <Table>
             <TableHeader>
                 <TableRow>
-                    <TableHead>Comments</TableHead>
+                    <TableHead className='bg-stone-50'>Comments</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>

@@ -5,6 +5,8 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { getThreadById } from '@/lib/thread.db';
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+
+
 import { Comments } from '@/app/_components/Comments';
 import { NewCommentForm } from '@/app/_components/NewCommentForm';
 import { Thread, Comment } from '@/app/types/thread';
@@ -12,6 +14,7 @@ import { Thread, Comment } from '@/app/types/thread';
 type Params = {
     id: string
 }
+
 
 const ThreadDetailsPage = () => {
     const [thread, setThread] = useState<Thread | null>(null);
@@ -54,12 +57,14 @@ const ThreadDetailsPage = () => {
 
     return (
         <>
-            <div className='w-full mx-auto pl-12 px-6 max-w-6xl my-6'>
+            <div className='w-full mx-auto pl-12 px-6 max-w-6xl my-8 pt-6'>
                 <div className='rounded-md border'>
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Thread {thread.title}</TableHead>
+                                <TableHead className='text-foreground text-lg p-4 bg-stone-50'>
+                                    {thread.title}
+                                </TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -78,8 +83,9 @@ const ThreadDetailsPage = () => {
             <div className='w-full pl-12 px-6 py-8 absolute bottom-0 bg-slate-200'>
                 <div className='mx-auto max-w-3xl'>
                     <NewCommentForm id={thread.id} onCommentSubmit={handleCommentSubmit} />
+
                 </div>
-            </div>
+            )}
         </>
     );
 };

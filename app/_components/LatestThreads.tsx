@@ -12,23 +12,36 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { formatCategory } from '@/lib/formattingCategoryForURL';
-
+import { formatCategoryforURL } from '@/lib/formatCategory';
 
 export const LatestThreads = () => {
     const [threads, setThreads] = useState<Thread[]>([]);
+    const [loading, setLoading] = useState(true);
+
     const router = useRouter();
 
     useEffect(() => {
         const fetchThreads = async () => {
-            const data: Thread[] = await getAllThreads();
-            setThreads(data);
+            try {
+                const data: Thread[] = await getAllThreads();
+                setThreads(data);
+            } catch (error) {
+                console.error('Error fetching threads:', error);
+            } finally {
+                setLoading(false);
+            }
         };
 
         fetchThreads();
     }, []);
 
-
+    if (loading) {
+        return (
+            <div className='flex pt-16 text-center justify-center max-auto text-lg font-medium'>
+                Loading...
+            </div>
+        );
+    }
     
     const handleRowClick = async (threadId: string, category: string) => {
         try {
@@ -42,6 +55,7 @@ export const LatestThreads = () => {
         } catch (error) {
             console.error('Error fetching thread:', error);
         }
+
     };
 
     return (
