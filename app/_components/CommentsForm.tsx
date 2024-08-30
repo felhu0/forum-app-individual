@@ -20,9 +20,10 @@ import { addCommentToThread } from '@/lib/thread.db';
 import toast from 'react-hot-toast';
 import { Timestamp } from 'firebase/firestore';
 import { useAuth } from './authProvider';
+import { Textarea } from '@/components/ui/textarea';
 
 export const CommentsForm: React.FC<{ id: string }> = ({ id }) => {
-  console.log(id)
+
     const { user: currentUser } = useAuth();
 
     const FormSchema = z.object({
@@ -69,27 +70,31 @@ export const CommentsForm: React.FC<{ id: string }> = ({ id }) => {
         <Form {...form}>
             <form
                 onSubmit={form.handleSubmit(onSubmit)}
-                className='space-y-8'>
+                className='space-y-4'>
                 <FormField
                     control={form.control}
                     name='commentBody'
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Write Comment</FormLabel>
+                            <FormLabel className='text-lg'>
+                                Write Comment
+                            </FormLabel>
                             <FormControl>
-                                <Input
+                                <Textarea
                                     placeholder='Write your comment here...'
+                                    rows={6}
                                     {...field}
                                 />
                             </FormControl>
-                            <FormDescription>
-                                This is your public display name.
-                            </FormDescription>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
-                <Button type='submit'>Submit</Button>
+                <Button
+                    type='submit'
+                    className='px-8'>
+                    Add Comment
+                </Button>
             </form>
         </Form>
     );
