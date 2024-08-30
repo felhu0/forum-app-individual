@@ -83,9 +83,8 @@ const ThreadDetailsPage = () => {
             <div className='w-full pl-12 px-6 py-8 absolute bottom-0 bg-slate-200'>
                 <div className='mx-auto max-w-3xl'>
                     <NewCommentForm id={thread.id} onCommentSubmit={handleCommentSubmit} />
-
                 </div>
-            )}
+            </div>
         </>
     );
 };

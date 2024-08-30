@@ -12,7 +12,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { formatCategoryforURL } from '@/lib/formatCategory';
+import { formatCategory } from '@/lib/formatCategory';
 
 export const LatestThreads = () => {
     const [threads, setThreads] = useState<Thread[]>([]);

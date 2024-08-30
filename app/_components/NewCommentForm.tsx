@@ -1,14 +1,13 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useForm, useController } from 'react-hook-form';
 import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
 import {
     Form,
     FormControl,
-    FormField,
     FormItem,
     FormLabel,
     FormMessage,
@@ -19,7 +18,6 @@ import toast from 'react-hot-toast';
 import { Timestamp } from 'firebase/firestore';
 import { useAuth } from './authProvider';
 import { Textarea } from '@/components/ui/textarea';
-
 
 type NewCommentFormProps = {
     id: string;
@@ -41,6 +39,12 @@ export const NewCommentForm: React.FC<NewCommentFormProps> = ({ id, onCommentSub
         defaultValues: {
             commentBody: '',
         },
+    });
+
+    const { field } = useController({
+        name: 'commentBody',
+        control: form.control,
+        defaultValue: '',
     });
 
     const onSubmit = async (data: z.infer<typeof FormSchema>) => {
@@ -73,20 +77,14 @@ export const NewCommentForm: React.FC<NewCommentFormProps> = ({ id, onCommentSub
 
     return (
         <Form {...form}>
-
-            <form onSubmit={form.handleSubmit(onSubmit)}>
-
-            <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className='space-y-8 my-4'>
-                            <FormLabel>Comment</FormLabel>
-                            <FormControl>
-                                <Textarea placeholder="Write your comment..." {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8 my-4'>
+                <FormItem>
+                    <FormLabel>Comment</FormLabel>
+                    <FormControl>
+                        <Textarea placeholder="Write your comment..." {...field} />
+                    </FormControl>
+                    <FormMessage />
+                </FormItem>
                 <Button type="submit">Submit</Button>
             </form>
         </Form>
