@@ -28,7 +28,9 @@ const ThreadDetailsPage = () => {
   const [thread, setThread] = useState<Thread | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [answered, setAnswered] = useState<boolean>(false);
-  const [answeredCommentId, setAnsweredCommentId] = useState<string | null>(null);
+  const [answeredCommentId, setAnsweredCommentId] = useState<string | null>(
+    null
+  );
   const [threadCreatorId, setThreadCreatorId] = useState<User | null>(null);
   const { user } = useAuth();
   const router = useRouter();
@@ -149,6 +151,11 @@ const ThreadDetailsPage = () => {
             <TableBody>
               <TableRow>
                 <TableCell>{thread.description}</TableCell>
+              </TableRow>
+            </TableBody>
+            <TableBody>
+              <TableRow>
+                <TableCell>{thread.creator.name}</TableCell>
               </TableRow>
             </TableBody>
           </Table>
