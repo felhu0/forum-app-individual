@@ -115,6 +115,8 @@ const ThreadDetailsPage = () => {
     );
   }
 
+ 
+
   return (
     <>
       <div className="w-full mx-auto pl-12 px-6 max-w-6xl my-8 pt-6">
@@ -154,9 +156,11 @@ const ThreadDetailsPage = () => {
               </TableRow>
             </TableBody>
             <TableBody>
-              <TableRow>
-                <TableCell>{thread.creator.name}</TableCell>
-              </TableRow>
+                <TableRow className="bg-stone-50">
+                    <TableCell className="font-bold text-yellow-700">
+                        By {thread.creator.name}
+                    </TableCell>
+                </TableRow>
             </TableBody>
           </Table>
         </div>
