@@ -90,7 +90,8 @@ export const createThread = async (data: Thread) => {
             },
             comments: [],
             isQnA: data.isQnA || false,
-            isAnswered: data.isAnswered || false
+            isAnswered: data.isAnswered || false,
+            isLocked: data.isLocked || false
         };
 
         await addDoc(collection(db, 'threads'), newThread);
@@ -118,29 +119,52 @@ export const updateThread = async (threadId: string, fieldsToUpdate: Partial<Thr
     }
 };
 
+export const lockThread = async (threadId: string, isLocked: boolean): Promise<void> => {
+    try {
+        const threadDocRef = doc(db, 'threads', threadId);
+        const threadDoc = await getDoc(threadDocRef);
+
+        if (!threadDoc.exists()) {
+            throw new Error('Thread not found');
+        }
+
+        await updateDoc(threadDocRef, { isLocked });
+        toast.success(`Thread ${isLocked ? 'locked' : 'unlocked'} successfully!`);
+    } catch (error) {
+        toast.error(`Failed to ${isLocked ? 'lock' : 'unlock'} thread: ` + (error as Error).message);
+        console.error(`Error ${isLocked ? 'locking' : 'unlocking'} thread:`, error);
+    }
+};
+
 export const addCommentToThread = async (threadId: string, comment: Comment): Promise<Comment> => {
     try {
+        const threadDocRef = doc(db, 'threads', threadId);
+        const threadDoc = await getDoc(threadDocRef);
+
+        if (!threadDoc.exists()) {
+            throw new Error('Thread not found');
+        }
+
+        const threadData = threadDoc.data() as Thread;
+
+        if (threadData.isLocked) {
+            throw new Error('Thread is locked. You can no longer comment.');
+        }
+
         const user = await getUserById(comment.creator.id);
         if (!user) {
             throw new Error('User not found');
         }
 
-        const threadDocRef = doc(db, 'threads', threadId);
-        const threadDoc = await getDoc(threadDocRef);
+        const updatedComment = { ...comment, creator: { ...comment.creator, email: user.email } };
+        const updatedComments = [...threadData.comments, updatedComment];
 
-        if (threadDoc.exists()) {
-            const threadData = threadDoc.data() as Thread;
-            const updatedComment = { ...comment, creator: { ...comment.creator, email: user.email } };
-            const updatedComments = [...threadData.comments, updatedComment];
+        await updateDoc(threadDocRef, {
+            comments: updatedComments,
+        });
 
-            await updateDoc(threadDocRef, {
-                comments: updatedComments
-            });
-            toast.success('Comment added successfully!');
-            return updatedComment;
-        } else {
-            throw new Error('Thread not found');
-        }
+        toast.success('Comment added successfully!');
+        return updatedComment;
     } catch (error) {
         toast.error('Failed to add comment: ' + (error as Error).message);
         throw new Error('Failed to add comment: ' + (error as Error).message);
