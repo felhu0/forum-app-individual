@@ -68,8 +68,8 @@ export const NewCommentForm: React.FC<NewCommentFormProps> = ({ id, onCommentSub
             await addCommentToThread(id, newComment);
             
             form.reset();
-            onCommentSubmit(newComment); // Pass the new comment to the callback
-            return newComment; // Return the new comment
+            onCommentSubmit(newComment); 
+            return newComment;
         } catch (error) {
             toast.error('Failed to add comment.');
         }

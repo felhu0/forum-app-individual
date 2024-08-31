@@ -40,7 +40,6 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [authLoaded, setAuthLoaded] = useState<boolean>(false);
 
-  // Check if there is a logged in user
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (_user) => {
       if (_user) {

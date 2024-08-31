@@ -128,26 +128,3 @@ export const addCommentToThread = async (threadId: string, comment: Comment): Pr
         throw new Error('Failed to add comment: ' + (error as Error).message);
     }
 };
-
-export const getCommentsByThreadId = async (threadId: string): Promise<Comment[]> => {
-    try {
-        const commentsCollection = collection(db, 'threads', threadId, 'comments');
-        const commentsSnapshot = await getDocs(commentsCollection);
-        if (commentsSnapshot.empty) {
-            return [];
-        }
-
-        const comments: Comment[] = commentsSnapshot.docs.map(commentDoc => {
-            const commentData = commentDoc.data() as Comment;
-            return {
-                ...commentData,
-                creationDate: Timestamp.fromDate(commentData.creationDate.toDate()),
-            };
-        });
-
-        return comments;
-    } catch (error) {
-        console.error('Failed to fetch comments:', error);
-        return [];
-    }
-};
