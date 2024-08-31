@@ -63,7 +63,6 @@ export const getThreadById = async (id: string): Promise<Thread | null> => {
         };
 
         console.log(`Fetched ${thread.comments.length} comments for thread ID ${id}.`);
-
         return thread;
     } catch (error) {
         toast.error('Failed to fetch thread: ' + (error as Error).message);
