@@ -27,7 +27,9 @@ const ThreadDetailsPage = () => {
   const [thread, setThread] = useState<Thread | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [answered, setAnswered] = useState<boolean>(false);
-  const [answeredCommentId, setAnsweredCommentId] = useState<string | null>(null);
+  const [answeredCommentId, setAnsweredCommentId] = useState<string | null>(
+    null
+  );
   const [threadCreatorId, setThreadCreatorId] = useState<User | null>(null);
   const router = useRouter();
   const { id } = useParams<Params>();
@@ -120,6 +122,11 @@ const ThreadDetailsPage = () => {
                 <TableCell>{thread.description}</TableCell>
               </TableRow>
             </TableBody>
+            <TableBody>
+              <TableRow>
+                <TableCell>{thread.creator.name}</TableCell>
+              </TableRow>
+            </TableBody>
           </Table>
         </div>
       </div>
@@ -141,7 +148,10 @@ const ThreadDetailsPage = () => {
       </div>
       <div className="w-full pl-12 px-6 py-8 absolute bottom-0 bg-slate-200">
         <div className="mx-auto max-w-3xl">
-          <NewCommentForm id={thread.id} onCommentSubmit={handleCommentSubmit} />
+          <NewCommentForm
+            id={thread.id}
+            onCommentSubmit={handleCommentSubmit}
+          />
         </div>
       </div>
     </>
