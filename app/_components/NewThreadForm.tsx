@@ -68,6 +68,7 @@ export const NewThreadForm = () => {
                     id: currentUser.id,
                     email: currentUser.email,
                     username: currentUser.username,
+                    name: ''
                 },
                 isQnA: data.isQnA || false,
                 isAnswered: false
