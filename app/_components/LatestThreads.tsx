@@ -13,6 +13,8 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { formatCategory } from '@/lib/formatCategory';
+import { FaQuestionCircle } from 'react-icons/fa';
+
 
 export const LatestThreads = () => {
     const [threads, setThreads] = useState<Thread[]>([]);
@@ -82,6 +84,9 @@ export const LatestThreads = () => {
                                     <TableCell>
                                         <div>
                                             {thread.title}
+                                            {thread.isQnA && (
+                                                <FaQuestionCircle className='h-4 w-4 text-yellow-600 ml-2 inline' />
+                                            )}
                                             <div className='flex gap-1 mt-1 items-center'>
                                                 <span className='text-xs text-muted-foreground'>
                                                     in
