@@ -90,6 +90,8 @@ export const createThread = async (data: Thread) => {
                 name: data.creator.username,
             },
             comments: [],
+            isQnA: data.isQnA || false,
+            isAnswered: data.isAnswered || false
         };
 
         await addDoc(collection(db, 'threads'), newThread);
@@ -97,6 +99,23 @@ export const createThread = async (data: Thread) => {
     } catch (error) {
         toast.error('Failed to create thread: ' + (error as Error).message);
         console.error('Error creating thread:', error);
+    }
+};
+
+export const updateThread = async (threadId: string, fieldsToUpdate: Partial<Thread>): Promise<void> => {
+    try {
+        const threadDocRef = doc(db, 'threads', threadId);
+        const threadDoc = await getDoc(threadDocRef);
+
+        if (!threadDoc.exists()) {
+            throw new Error('Thread not found');
+        }
+
+        await updateDoc(threadDocRef, fieldsToUpdate);
+        toast.success('Thread updated successfully!');
+    } catch (error) {
+        toast.error('Failed to update thread: ' + (error as Error).message);
+        console.error('Error updating thread:', error);
     }
 };
 
