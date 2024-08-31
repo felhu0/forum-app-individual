@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { getThreadById, updateThread } from "@/lib/thread.db";
-import { FaQuestionCircle } from "react-icons/fa";
+import { getThreadById, lockThread, updateThread } from "@/lib/thread.db";
+import { FaQuestionCircle, FaUnlock, FaLock } from "react-icons/fa";
 
 import {
   Table,
@@ -18,6 +18,7 @@ import { Comments } from "@/app/_components/Comments";
 import { NewCommentForm } from "@/app/_components/NewCommentForm";
 import { Thread, Comment } from "@/app/types/thread";
 import { User } from "@/app/types/user";
+import { useAuth } from "@/app/_components/authProvider";
 
 type Params = {
   id: string;
@@ -29,6 +30,7 @@ const ThreadDetailsPage = () => {
   const [answered, setAnswered] = useState<boolean>(false);
   const [answeredCommentId, setAnsweredCommentId] = useState<string | null>(null);
   const [threadCreatorId, setThreadCreatorId] = useState<User | null>(null);
+  const { user } = useAuth();
   const router = useRouter();
   const { id } = useParams<Params>();
 
@@ -92,6 +94,17 @@ const ThreadDetailsPage = () => {
     }
   };
 
+  const handleToggleLock = async () => {
+    if (!thread) return;
+
+    try {
+      await lockThread(thread.id, !thread.isLocked);
+      setThread({ ...thread, isLocked: !thread.isLocked });
+    } catch (error) {
+      console.error("Failed to lock/unlock thread.", error);
+    }
+  }
+
   if (!thread) {
     return (
       <div className="flex pt-16 text-center justify-center mx-auto text-lg font-medium">
@@ -107,11 +120,29 @@ const ThreadDetailsPage = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="text-foreground text-lg p-4 bg-stone-50 flex items-center">
+                <TableHead className="text-foreground text-lg p-4 m-2 bg-stone-50 flex items-center">
                   {thread.title}
                   {thread.isQnA && (
                     <FaQuestionCircle className="h-6 w-6 text-yellow-600 ml-2" />
                   )}
+                  {user && (
+                      <div className="w-full mx-auto pl-12 px-6 max-w-6xl my-8 flex justify-end">
+                        <button
+                          onClick={handleToggleLock}
+                          className="px-4 bg-blue-200 rounded-full  flex justify-items-end items-center"
+                        >
+                          {thread.isLocked ? (
+                            <>
+                              <FaLock className="m-2" />
+                            </>
+                          ) : (
+                            <>
+                              <FaUnlock className="m-2" />
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    )}
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -139,11 +170,19 @@ const ThreadDetailsPage = () => {
           )}
         </div>
       </div>
-      <div className="w-full pl-12 px-6 py-8 absolute bottom-0 bg-slate-200">
-        <div className="mx-auto max-w-3xl">
-          <NewCommentForm id={thread.id} onCommentSubmit={handleCommentSubmit} />
+      {!thread.isLocked && (
+        <div className="w-full pl-12 px-6 py-8 absolute bottom-0 bg-slate-200">
+          <div className="mx-auto max-w-3xl">
+            <NewCommentForm id={thread.id} onCommentSubmit={handleCommentSubmit} />
+          </div>
         </div>
-      </div>
+      )}
+
+      {thread.isLocked && (
+        <div className="w-full pl-12 px-6 py-8 bg-red-100 text-red-500 text-center">
+          This thread is locked. No further comments can be added.
+        </div>
+      )}
     </>
   );
 };
