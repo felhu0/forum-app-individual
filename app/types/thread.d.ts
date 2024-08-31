@@ -15,6 +15,7 @@ export type Comment = {
   content: string;
   creationDate: Timestamp;
   creator: User;
+  answered:boolean;
 }
 
 export type Thread = {
@@ -26,4 +27,7 @@ export type Thread = {
   description: string;
   creator: User;
   comments: Comment[];
+  isQnA?:boolean;
+  isAnswered?:boolean;
+  answeredCommentId?: string | null;
 }

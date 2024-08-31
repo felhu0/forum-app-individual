@@ -18,11 +18,13 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import toast from 'react-hot-toast';
 import { ComboBox } from './SelectCategoryNewThread';
-import { addDoc, collection, doc, getDoc, Timestamp } from 'firebase/firestore';
-import { db } from '@/firebase.config';
+import { Timestamp } from 'firebase/firestore';
 import { useAuth } from './authProvider';
 import { Thread, ThreadCategory } from '../types/thread';
 import { createThread } from '@/lib/thread.db';
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { CheckedState } from '@radix-ui/react-checkbox';
 
 
 const FormSchema = z.object({
@@ -33,6 +35,7 @@ const FormSchema = z.object({
         message: 'Your new thread message must be at least 10 characters.',
     }),
     threadCategory: z.string(),
+    isQnA: z.boolean().optional(),
 });
 
 export const NewThreadForm = () => {
@@ -43,12 +46,11 @@ export const NewThreadForm = () => {
             threadTitle: '',
             threadBody: '',
             threadCategory: '',
-        },
+            isQnA: false
+        } as z.infer<typeof FormSchema>,
     });
 
-
     const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-
         if (!currentUser) {
             toast.error('You must be logged in to create a thread.');
             return;
@@ -67,6 +69,8 @@ export const NewThreadForm = () => {
                     email: currentUser.email,
                     username: currentUser.username,
                 },
+                isQnA: data.isQnA || false,
+                isAnswered: false
             };
 
             await createThread(newThread);
@@ -78,6 +82,11 @@ export const NewThreadForm = () => {
         }
     };
 
+    
+    const handleCheckedQnA = (checked: boolean) => {
+        console.log("checked called!");
+        console.log("Checkbox checked:", checked);
+    };
 
     return (
         <Form {...form}>
@@ -119,6 +128,30 @@ export const NewThreadForm = () => {
                                     className='resize-none'
                                     {...field}
                                 />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name='isQnA'
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormControl>
+                                <div className='flex items-center'>
+                                    <Checkbox
+                                        id='isQnA'
+                                        checked={field.value || false}
+                                        onCheckedChange={(checked) => {
+                                            field.onChange(checked);
+                                            handleCheckedQnA(Boolean(checked));
+                                        }}
+                                    />
+                                    <Label htmlFor='isQnA' className='ml-2 cursor-pointer'>
+                                        Q&A
+                                    </Label>
+                                </div>
                             </FormControl>
                             <FormMessage />
                         </FormItem>
