@@ -30,4 +30,5 @@ export type Thread = {
   isQnA?:boolean;
   isAnswered?:boolean;
   answeredCommentId?: string | null;
+  isLocked: boolean;
 }
