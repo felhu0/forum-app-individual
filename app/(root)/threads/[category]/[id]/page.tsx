@@ -74,21 +74,21 @@ const ThreadDetailsPage = () => {
         console.error("Thread not found.");
         return;
       }
-
+  
       const newIsAnswered = answeredCommentId !== commentId;
-
+  
       const fieldsToUpdate: Partial<Thread> = {
         isAnswered: newIsAnswered,
       };
-
+  
       if (newIsAnswered) {
         fieldsToUpdate.answeredCommentId = commentId;
       } else {
         fieldsToUpdate.answeredCommentId = null;
       }
-
+  
       await updateThread(thread.id, fieldsToUpdate);
-
+  
       setAnswered(newIsAnswered);
       setAnsweredCommentId(newIsAnswered ? commentId : null);
     } catch (error) {

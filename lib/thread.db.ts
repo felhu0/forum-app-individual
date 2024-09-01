@@ -156,11 +156,20 @@ export const addCommentToThread = async (threadId: string, comment: Comment): Pr
             throw new Error('User not found');
         }
 
-        const updatedComment = { ...comment, creator: { ...comment.creator, email: user.email } };
+        const updatedComment = {
+            ...comment,
+            creator: {
+                ...comment.creator,
+                email: user.email,
+                name: user.name || '', 
+                username: user.username || '' 
+            }
+        };
         const updatedComments = [...threadData.comments, updatedComment];
 
         await updateDoc(threadDocRef, {
             comments: updatedComments,
+            isAnswered: false
         });
 
         toast.success('Comment added successfully!');

@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/form';
 import { Comment } from '../types/thread';
 import { addCommentToThread } from '@/lib/thread.db';
+import { v4 as uuidv4 } from 'uuid';
 import toast from 'react-hot-toast';
 import { Timestamp } from 'firebase/firestore';
 import { useAuth } from './authProvider';
@@ -55,14 +56,16 @@ export const NewCommentForm: React.FC<NewCommentFormProps> = ({ id, onCommentSub
 
         try {
             const newComment: Comment = {
-                id: '',
+                id: uuidv4(),
                 content: data.commentBody,
                 creationDate: Timestamp.now(),
                 creator: {
                     id: currentUser.id,
                     username: currentUser.username,
-                    email: currentUser.email
+                    email: currentUser.email,
+                    name: currentUser.name || '',
                 },
+                
             };
 
             await addCommentToThread(id, newComment);
