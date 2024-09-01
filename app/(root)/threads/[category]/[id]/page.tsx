@@ -177,6 +177,7 @@ const ThreadDetailsPage = () => {
               handleAnswered={handleMarkAsAnswered}
               answeredCommentId={answeredCommentId ?? null}
               isQnA={thread.isQnA}
+              isLocked={thread.isLocked}
             />
           )}
         </div>
