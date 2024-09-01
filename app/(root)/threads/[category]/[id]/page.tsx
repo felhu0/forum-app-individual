@@ -137,7 +137,7 @@ const ThreadDetailsPage = () => {
                         >
                           {thread.isLocked ? (
                             <>
-                              <FaLock className="m-2" />
+                              <FaLock className="m-2 text-red-500" />
                             </>
                           ) : (
                             <>
