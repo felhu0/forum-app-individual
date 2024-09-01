@@ -74,21 +74,21 @@ const ThreadDetailsPage = () => {
         console.error("Thread not found.");
         return;
       }
-
+  
       const newIsAnswered = answeredCommentId !== commentId;
-
+  
       const fieldsToUpdate: Partial<Thread> = {
         isAnswered: newIsAnswered,
       };
-
+  
       if (newIsAnswered) {
         fieldsToUpdate.answeredCommentId = commentId;
       } else {
         fieldsToUpdate.answeredCommentId = null;
       }
-
+  
       await updateThread(thread.id, fieldsToUpdate);
-
+  
       setAnswered(newIsAnswered);
       setAnsweredCommentId(newIsAnswered ? commentId : null);
     } catch (error) {
@@ -137,7 +137,7 @@ const ThreadDetailsPage = () => {
                         >
                           {thread.isLocked ? (
                             <>
-                              <FaLock className="m-2" />
+                              <FaLock className="m-2 text-red-500" />
                             </>
                           ) : (
                             <>
@@ -177,6 +177,7 @@ const ThreadDetailsPage = () => {
               handleAnswered={handleMarkAsAnswered}
               answeredCommentId={answeredCommentId ?? null}
               isQnA={thread.isQnA}
+              isLocked={thread.isLocked}
             />
           )}
         </div>

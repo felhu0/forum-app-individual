@@ -9,6 +9,8 @@ import {
 import { Comment } from '../types/thread';
 import { useAuth } from './authProvider';
 import { FaCheck, FaTimes } from 'react-icons/fa';
+import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 type CommentsProps = {
     comments: Comment[];
@@ -19,6 +21,7 @@ type CommentsProps = {
     setAnswered: (answered: boolean) => void;
     handleAnswered: (commentId: string) => Promise<void>;
     isQnA: boolean;
+    isLocked: boolean;
 }
 
 export const Comments: React.FC<CommentsProps> = ({
@@ -27,8 +30,10 @@ export const Comments: React.FC<CommentsProps> = ({
     answered,
     answeredCommentId,
     handleAnswered,
+    isLocked
 }) => {
     const { user: currentUser } = useAuth();
+    const router = useRouter();
 
     return (
         <Table>
@@ -39,7 +44,7 @@ export const Comments: React.FC<CommentsProps> = ({
             </TableHeader>
             <TableBody>
                 {comments.map((comment, index) => {
-                    const isAnsweredComment = comment.id === answeredCommentId;
+                    const isAnswered = comment.id === answeredCommentId;
                     return (
                         <TableRow key={comment.id || index} className="comment-hover">
                             <TableCell>{comment.content}</TableCell>
@@ -50,16 +55,24 @@ export const Comments: React.FC<CommentsProps> = ({
                                 </small>
                             </TableCell>
                             <TableCell>
-                                {isAnsweredComment ? (
-                                    <span className="text-green-600 flex items-center">
+                                {isAnswered ? (
+                                    <span className={`flex items-center ${isLocked ? 'text-gray-400' : 'text-green-600'}`}>
                                         <FaCheck className="mr-2" />
                                         Answered
                                     </span>
                                 ) : (
                                     <button
-                                        className="text-gray-600 flex items-center"
-                                        onClick={() => handleAnswered(comment.id)}
-                                        >
+                                        className={`flex items-center ${isLocked ? 'text-gray-400' : 'text-gray-600'}`}
+                                        onClick={() => {
+                                            if (currentUser) {
+                                                handleAnswered(comment.id);
+                                            } else {
+                                                router.push('/log-in');
+                                                toast.error("You need to log in to mark a comment as answered.")
+                                            }
+                                        }}
+                                        disabled={isLocked}
+                                    >
                                         <FaCheck className="mr-2" />
                                         Mark as Answered
                                     </button>

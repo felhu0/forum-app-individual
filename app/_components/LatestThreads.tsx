@@ -13,7 +13,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { formatCategory } from '@/lib/formatCategory';
-import { FaQuestionCircle } from 'react-icons/fa';
+import { FaLock, FaQuestionCircle } from 'react-icons/fa';
 
 
 export const LatestThreads = () => {
@@ -86,6 +86,9 @@ export const LatestThreads = () => {
                                             {thread.title}
                                             {thread.isQnA && (
                                                 <FaQuestionCircle className='h-4 w-4 text-yellow-600 ml-2 inline' />
+                                            )}
+                                            {thread.isLocked && (
+                                                <FaLock className='h-4 w-4 text-red-500 ml-2 inline' />
                                             )}
                                             <div className='flex gap-1 mt-1 items-center'>
                                                 <span className='text-xs text-muted-foreground'>

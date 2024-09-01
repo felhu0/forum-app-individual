@@ -25,6 +25,7 @@ import { createThread } from "@/lib/thread.db";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { CheckedState } from "@radix-ui/react-checkbox";
+import { useRouter } from "next/navigation";
 
 const FormSchema = z.object({
   threadTitle: z.string().min(10, {
@@ -39,6 +40,7 @@ const FormSchema = z.object({
 
 export const NewThreadForm = () => {
   const { user: currentUser } = useAuth();
+  const router = useRouter();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -77,6 +79,8 @@ export const NewThreadForm = () => {
       await createThread(newThread);
 
       form.reset();
+
+      router.push('/')
     } catch (error) {
       toast.error("Failed to create thread: " + (error as Error).message);
       console.error("Error creating thread:", error);

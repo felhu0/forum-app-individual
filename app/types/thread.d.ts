@@ -15,7 +15,6 @@ export type Comment = {
   content: string;
   creationDate: Timestamp;
   creator: User;
-  answered:boolean;
 }
 
 export type Thread = {
@@ -32,3 +31,5 @@ export type Thread = {
   answeredCommentId?: string | null;
   isLocked: boolean;
 }
+
+
