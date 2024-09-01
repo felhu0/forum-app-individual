@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { Badge } from '@/components/ui/badge';
 import { useEffect, useState } from 'react';
 import { Thread } from '../types/thread';
 import { getAllThreads, getThreadById } from '@/lib/thread.db';
@@ -12,9 +13,9 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { formatCategory } from '@/lib/formatCategory';
-import { FaLock, FaQuestionCircle } from 'react-icons/fa';
-
+import { formatCategoryforURL } from '@/lib/formatCategory';
+import { FaLock } from 'react-icons/fa';
+import Loading from './Loading';
 
 export const LatestThreads = () => {
     const [threads, setThreads] = useState<Thread[]>([]);
@@ -38,18 +39,14 @@ export const LatestThreads = () => {
     }, []);
 
     if (loading) {
-        return (
-            <div className='flex pt-16 text-center justify-center max-auto text-lg font-medium'>
-                Loading...
-            </div>
-        );
+        return <Loading />;
     }
-    
+
     const handleRowClick = async (threadId: string, category: string) => {
         try {
             const thread = await getThreadById(threadId);
             if (thread) {
-                const formattedCategory = formatCategory(category);
+                const formattedCategory = formatCategoryforURL(category);
                 router.push(`/threads/${formattedCategory}/${threadId}`);
             } else {
                 console.error('Thread not found');
@@ -57,7 +54,6 @@ export const LatestThreads = () => {
         } catch (error) {
             console.error('Error fetching thread:', error);
         }
-
     };
 
     return (
@@ -82,22 +78,30 @@ export const LatestThreads = () => {
                                     }
                                     className='cursor-pointer'>
                                     <TableCell>
-                                        <div>
-                                            {thread.title}
-                                            {thread.isQnA && (
-                                                <FaQuestionCircle className='h-4 w-4 text-yellow-600 ml-2 inline' />
-                                            )}
-                                            {thread.isLocked && (
-                                                <FaLock className='h-4 w-4 text-red-500 ml-2 inline' />
-                                            )}
-                                            <div className='flex gap-1 mt-1 items-center'>
-                                                <span className='text-xs text-muted-foreground'>
-                                                    in
-                                                </span>
-                                                <span className='text-xs hover:underline cursor-pointer'>
-                                                    {thread.category}
-                                                </span>
+                                        <div className='flex justify-between items-center'>
+                                            <span className='truncate'>
+                                                {thread.title}
+                                            </span>
+                                            <div className='flex items-center gap-2'>
+                                                {thread.isQnA && (
+                                                    <Badge variant='qna'>
+                                                        Q&A
+                                                    </Badge>
+                                                )}
+                                                {thread.isLocked && (
+                                                    <Badge variant='destructive'>
+                                                        <FaLock className='h-3 w-3 my-[0.2rem] mx-1' />
+                                                    </Badge>
+                                                )}
                                             </div>
+                                        </div>
+                                        <div className='flex gap-1 mt-1 items-center'>
+                                            <span className='text-xs text-muted-foreground'>
+                                                in
+                                            </span>
+                                            <span className='text-xs hover:underline cursor-pointer'>
+                                                {thread.category}
+                                            </span>
                                         </div>
                                     </TableCell>
                                 </TableRow>
