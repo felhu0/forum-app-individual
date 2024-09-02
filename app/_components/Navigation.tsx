@@ -21,6 +21,8 @@ import { formatCategoryforURL } from '@/lib/formatCategory';
 import { useRouter } from 'next/navigation';
 import { auth } from '@/firebase.config';
 import { signOut } from 'firebase/auth';
+import { useState } from 'react';
+import Loading from './Loading';
 
 const threadCategories: { title: string; description: string }[] = [
     {
@@ -52,6 +54,7 @@ const threadCategories: { title: string; description: string }[] = [
 
 export const Navigation = () => {
     const router = useRouter();
+    const [loading, setLoading] = useState(false);
     const { user } = useAuth();
 
     const handleRedirect = (category: string) => {
@@ -68,17 +71,23 @@ export const Navigation = () => {
     };
 
     const handleLogout = async () => {
+        setLoading(true);
         try {
             await signOut(auth);
-            router.push('/');
         } catch (error) {
             console.error('Could not log out', error);
+        } finally {
+            setLoading(false);
+            router.push('/');
         }
     };
+
+    if (loading) return <Loading />;
+
     return (
         <NavigationMenu className='w-full'>
             <NavigationMenuList>
-            <NavigationMenuItem>
+                <NavigationMenuItem>
                     <Link
                         href='/'
                         legacyBehavior
@@ -108,30 +117,6 @@ export const Navigation = () => {
                             ))}
                         </ul>
                     </NavigationMenuContent>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                    <Link
-                        href='#'
-                        legacyBehavior
-                        passHref>
-                        <NavigationMenuLink
-                            className={navigationMenuTriggerStyle()}>
-                            <FaFire className='size-4 mr-2' />
-                            Most Popular
-                        </NavigationMenuLink>
-                    </Link>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                    <Link
-                        href='#'
-                        legacyBehavior
-                        passHref>
-                        <NavigationMenuLink
-                            className={navigationMenuTriggerStyle()}>
-                            <MdOutlineNewReleases className='size-5 mr-2' />
-                            New & Trending
-                        </NavigationMenuLink>
-                    </Link>
                 </NavigationMenuItem>
             </NavigationMenuList>
             <div className='flex gap-4'>
