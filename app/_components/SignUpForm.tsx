@@ -59,6 +59,7 @@ export const SignUpForm = () => {
       await addNewUser({
         id: uid,
         username: `${values.firstName} ${values.lastName}`,
+        name: "",
         email: values.email,
         password: values.password,
       });
