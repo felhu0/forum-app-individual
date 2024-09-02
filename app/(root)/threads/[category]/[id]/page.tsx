@@ -24,6 +24,7 @@ import Loading from '@/app/_components/Loading';
 import { AlertCircle } from 'lucide-react';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { MarkedAsAnswered } from '@/app/_components/MarkedAsAnswered';
 
 type Params = {
     id: string;
@@ -202,7 +203,7 @@ const ThreadDetailsPage = () => {
             </div>
 
             {!thread.isLocked && user && (
-                <div className='w-full pl-12 px-6 py-8 relative bottom-0 bg-gray-200'>
+                <div className='w-full pl-12 px-6 py-8 bg-gray-200'>
                     <div className='mx-auto max-w-3xl'>
                         <NewCommentForm
                             id={thread.id}
@@ -213,15 +214,15 @@ const ThreadDetailsPage = () => {
             )}
 
             {thread.isLocked && (
-            <div className='w-full max-w-3xl mx-auto pl-12 px-6 py-8'>
-                <Alert variant='destructive'>
-                    <AlertCircle className='h-4 w-4' />
-                    <AlertTitle>This thread is locked.</AlertTitle>
-                    <AlertDescription>
-                        No further comments can be added.
-                    </AlertDescription>
-                </Alert>
-            </div>
+                <div className='w-full max-w-3xl mx-auto pl-12 px-6 py-8'>
+                    <Alert variant='destructive'>
+                        <AlertCircle className='h-4 w-4' />
+                        <AlertTitle>This thread is locked.</AlertTitle>
+                        <AlertDescription>
+                            No further comments can be added.
+                        </AlertDescription>
+                    </Alert>
+                </div>
             )}
         </main>
     );
