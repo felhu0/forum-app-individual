@@ -19,14 +19,19 @@ import toast from 'react-hot-toast';
 import { Timestamp } from 'firebase/firestore';
 import { useAuth } from './authProvider';
 import { Textarea } from '@/components/ui/textarea';
+import { GoCommentDiscussion } from 'react-icons/go';
+import { Badge } from '@/components/ui/badge';
+import { RiRadioButtonLine } from 'react-icons/ri';
 
 type NewCommentFormProps = {
     id: string;
-    onCommentSubmit: (comment: Comment) => void; 
+    onCommentSubmit: (comment: Comment) => void;
 };
 
-export const NewCommentForm: React.FC<NewCommentFormProps> = ({ id, onCommentSubmit }) => {
-
+export const NewCommentForm: React.FC<NewCommentFormProps> = ({
+    id,
+    onCommentSubmit,
+}) => {
     const { user: currentUser } = useAuth();
 
     const FormSchema = z.object({
@@ -65,13 +70,12 @@ export const NewCommentForm: React.FC<NewCommentFormProps> = ({ id, onCommentSub
                     email: currentUser.email,
                     name: currentUser.name || '',
                 },
-                
             };
 
             await addCommentToThread(id, newComment);
-            
+
             form.reset();
-            onCommentSubmit(newComment); 
+            onCommentSubmit(newComment);
             return newComment;
         } catch (error) {
             toast.error('Failed to add comment.');
@@ -80,15 +84,36 @@ export const NewCommentForm: React.FC<NewCommentFormProps> = ({ id, onCommentSub
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8 my-4'>
+            <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className='space-y-4 my-4'>
                 <FormItem>
-                    <FormLabel>Comment</FormLabel>
+                    <FormLabel>
+                        <div className='flex gap-1 items-center pb-4'>
+                            <Badge
+                                variant='secondary'
+                                className='rounded-full p-3'>
+                                <GoCommentDiscussion className='size-5' />
+                            </Badge>
+                            <p className='text-xl ml-1 font-semibold text-foreground/70'>
+                                Comment
+                            </p>
+                        </div>
+                    </FormLabel>
                     <FormControl>
-                        <Textarea placeholder="Write your comment..." {...field} />
+                        <Textarea
+                            placeholder='Write your message...'
+                            className='px-4 py-3 h-[140px] resize-none'
+                            {...field}
+                        />
                     </FormControl>
                     <FormMessage />
                 </FormItem>
-                <Button type="submit">Submit</Button>
+                <Button
+                    type='submit'
+                    className='px-6 flex gap-2 items-center'>
+                    <RiRadioButtonLine className='animate-pulse'/> <span>Add comment</span>
+                </Button>
             </form>
         </Form>
     );
