@@ -30,6 +30,7 @@ export const Comments: React.FC<CommentsProps> = ({
   answered,
   answeredCommentId,
   handleAnswered,
+  isQnA,
   isLocked,
 }) => {
   const { user: currentUser } = useAuth();
@@ -59,36 +60,37 @@ export const Comments: React.FC<CommentsProps> = ({
                 </div>
               </TableCell>
               <TableCell>
-                {isAnswered ? (
-                  <span
-                    className={`flex items-center ${
-                      isLocked ? "text-gray-400" : "text-green-600"
-                    }`}
-                  >
-                    <FaCheck className="mr-2" />
-                    Answered
-                  </span>
-                ) : (
-                  <button
-                    className={`flex items-center ${
-                      isLocked ? "text-gray-400" : "text-gray-600"
-                    }`}
-                    onClick={() => {
-                      if (currentUser) {
-                        handleAnswered(comment.id);
-                      } else {
-                        router.push("/log-in");
-                        toast.error(
-                          "You need to log in to mark a comment as answered."
-                        );
-                      }
-                    }}
-                    disabled={isLocked}
-                  >
-                    <FaCheck className="mr-2" />
-                    Mark as Answered
-                  </button>
-                )}
+                {isQnA &&
+                  (isAnswered ? (
+                    <span
+                      className={`flex items-center ${
+                        isLocked ? "text-gray-400" : "text-green-600"
+                      }`}
+                    >
+                      <FaCheck className="mr-2" />
+                      Answered
+                    </span>
+                  ) : (
+                    <button
+                      className={`flex items-center ${
+                        isLocked ? "text-gray-400" : "text-gray-600"
+                      }`}
+                      onClick={() => {
+                        if (currentUser) {
+                          handleAnswered(comment.id);
+                        } else {
+                          router.push("/log-in");
+                          toast.error(
+                            "You need to log in to mark a comment as answered."
+                          );
+                        }
+                      }}
+                      disabled={isLocked}
+                    >
+                      <FaCheck className="mr-2" />
+                      Mark as Answered
+                    </button>
+                  ))}
               </TableCell>
             </TableRow>
           );
