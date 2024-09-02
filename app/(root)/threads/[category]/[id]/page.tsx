@@ -21,6 +21,9 @@ import { User } from '@/app/types/user';
 import { useAuth } from '@/app/_components/authProvider';
 import { Badge } from '@/components/ui/badge';
 import Loading from '@/app/_components/Loading';
+import { AlertCircle } from 'lucide-react';
+
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 type Params = {
     id: string;
@@ -117,7 +120,7 @@ const ThreadDetailsPage = () => {
     if (loading || !thread) return <Loading />;
 
     return (
-        <main className='flex flex-col justify-between min-h-screen'>
+        <main className='flex flex-col justify-between '>
             <div className='w-full mx-auto pl-12 px-6 max-w-6xl my-8 pt-6'>
                 <div className='rounded-md border'>
                     <Table>
@@ -197,7 +200,8 @@ const ThreadDetailsPage = () => {
                     )}
                 </div>
             </div>
-            {!thread.isLocked && (
+
+            {!thread.isLocked && user && (
                 <div className='w-full pl-12 px-6 py-8 relative bottom-0 bg-gray-200'>
                     <div className='mx-auto max-w-3xl'>
                         <NewCommentForm
@@ -209,9 +213,15 @@ const ThreadDetailsPage = () => {
             )}
 
             {thread.isLocked && (
-                <div className='w-full pl-12 px-6 py-8 bg-red-100 text-red-500 text-center'>
-                    This thread is locked. No further comments can be added.
-                </div>
+            <div className='w-full max-w-3xl mx-auto pl-12 px-6 py-8'>
+                <Alert variant='destructive'>
+                    <AlertCircle className='h-4 w-4' />
+                    <AlertTitle>This thread is locked.</AlertTitle>
+                    <AlertDescription>
+                        No further comments can be added.
+                    </AlertDescription>
+                </Alert>
+            </div>
             )}
         </main>
     );

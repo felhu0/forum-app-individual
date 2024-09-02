@@ -29,7 +29,7 @@ const LandingPage = () => {
           </p>
         </div>
       </header>
-      <main className="mx-auto">
+      <main className="mx-auto pb-5">
         <Link href="/threads/new" onClick={handleAddNewThreadClick}>
           <Button
             className="flex items-center gap-1 mx-auto pl-12 px-6 my-8 max-w-6xl"

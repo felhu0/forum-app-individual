@@ -45,11 +45,7 @@ export const ThreadsByCategory = ({
         fetchThreads();
     }, [category]);
 
-    if (loading) {
-        return (
-            <Loading />
-        );
-    }
+    if (loading) return <Loading />;
 
     return (
         <div className='mx-auto pl-12 px-6 my-8 max-w-6xl'>

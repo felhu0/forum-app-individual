@@ -38,9 +38,7 @@ export const LatestThreads = () => {
         fetchThreads();
     }, []);
 
-    if (loading) {
-        return <Loading />;
-    }
+    if (loading) return <Loading />;
 
     const handleRowClick = async (threadId: string, category: string) => {
         try {
