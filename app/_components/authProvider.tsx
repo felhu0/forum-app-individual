@@ -114,7 +114,7 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
       }
       console.log("userCredential:", userCredential);
       console.log("userID:", userCredential.user.uid);
-      console.log("isModerator:", userCredential.user.isMoterator);
+
       const token = await userCredential.user.getIdToken();
       console.log("token:", token);
 
