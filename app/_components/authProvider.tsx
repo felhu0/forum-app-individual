@@ -1,6 +1,6 @@
 "use client";
 
-import { auth } from "@/firebase.config";
+import { auth, db } from "@/firebase.config";
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
@@ -18,12 +18,15 @@ import {
 } from "react";
 import toast from "react-hot-toast";
 import { User } from "../types/user";
+import { doc, getDoc } from "firebase/firestore";
 
 type AuthValues = {
+  id: string;
   email: string;
   password: string;
   firstName?: string;
   lastName?: string;
+  isModerator?: boolean;
 };
 type AuthContextType = {
   user: User | null;
@@ -41,14 +44,17 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const [authLoaded, setAuthLoaded] = useState<boolean>(false);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (_user) => {
+    const unsub = onAuthStateChanged(auth, async (_user) => {
       if (_user) {
+        const userDoc = await getDoc(doc(db, "users", _user.uid));
+        const userData = userDoc.data();
         const user = {
           id: _user.uid,
           username: _user.displayName || "",
           name: "",
           email: _user.email || "",
           password: "",
+          isModerator: userData?.isModerator || false,
         };
         setUser(user);
       } else {
@@ -106,7 +112,9 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
       if (!userCredential.user) {
         throw new Error("Something went wrong!. Please try again.");
       }
-      console.log(userCredential);
+      console.log("userCredential:", userCredential);
+      console.log("userID:", userCredential.user.uid);
+      console.log("isModerator:", userCredential.user.isMoterator);
       const token = await userCredential.user.getIdToken();
       console.log("token:", token);
 
