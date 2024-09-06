@@ -4,6 +4,7 @@ import { setDoc, doc, getDoc, deleteDoc, collection, getDocs, addDoc, updateDoc 
 import toast from 'react-hot-toast';
 import { Timestamp } from 'firebase/firestore'; 
 import { getUserById } from './user.db';
+import { tree } from 'next/dist/build/templates/app-page';
 
 
 export const getAllThreads = async (): Promise<Thread[]> => {
@@ -180,3 +181,21 @@ export const addCommentToThread = async (threadId: string, comment: Comment): Pr
         throw new Error('Failed to add comment: ' + (error as Error).message);
     }
 };
+
+
+export const deleteThread = async (threadId: string): Promise<boolean> => {
+    try {
+        const threadDocRef = doc(db, 'threads', threadId)
+
+        if(threadId) {
+            await deleteDoc(threadDocRef);
+            toast.success('Thread deleted successfully!');
+            return true;
+        } else {
+            throw new Error('Thread not found');
+        }
+    } catch (error) {
+        toast.error('Failed to delete thread: ' + (error as Error).message);
+        return false;
+    }
+}

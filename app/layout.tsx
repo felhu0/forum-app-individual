@@ -17,16 +17,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <AuthContextProvider>
-      <html lang="en" suppressHydrationWarning>
-        {/*Providers ska vara här*/}
-        <body className={inter.className}>
-          <>
-            <Toaster />
-            {children}
-          </>
-        </body>
-      </html>
-    </AuthContextProvider>
+    <html lang="en" suppressHydrationWarning>
+      {/*Providers ska vara här*/}
+      <body className={inter.className}>
+        <AuthContextProvider>
+          <Toaster />
+          {children}
+        </AuthContextProvider>
+      </body>
+    </html>
   );
 }

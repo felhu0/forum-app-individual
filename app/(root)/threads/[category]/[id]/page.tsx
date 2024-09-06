@@ -2,7 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { getThreadById, lockThread, updateThread } from "@/lib/thread.db";
+import {
+  deleteThread,
+  getThreadById,
+  lockThread,
+  updateThread,
+} from "@/lib/thread.db";
 import { FaUnlock, FaLock } from "react-icons/fa";
 
 import {
@@ -26,6 +31,7 @@ import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { MarkedAsAnswered } from "@/app/_components/MarkedAsAnswered";
 import { auth } from "@/firebase.config";
+import { set } from "zod";
 
 type Params = {
   id: string;
@@ -43,6 +49,7 @@ const ThreadDetailsPage = () => {
   const router = useRouter();
   const { id } = useParams<Params>();
   const [loading, setLoading] = useState(true);
+  const [deleted, setDeleted] = useState(false);
 
   useEffect(() => {
     const fetchThread = async () => {
@@ -117,6 +124,28 @@ const ThreadDetailsPage = () => {
     }
   };
 
+  const handleDelete = async (threadId: string) => {
+    try {
+      const threadDelete = await deleteThread(threadId);
+      if (threadDelete) {
+        console.log("Thread deleted");
+        setDeleted(true);
+      } else {
+        console.error("Thread not found");
+      }
+    } catch (error) {
+      console.error("Error deleting thread:", error);
+    }
+  };
+
+  if (deleted) {
+    return (
+      <div className="h-24 text-center">
+        <p>No thread found.</p>
+      </div>
+    );
+  }
+
   if (loading || !thread) return <Loading />;
 
   const canEdit = user && (user.id === thread.creator.id || user.isModerator);
@@ -137,7 +166,7 @@ const ThreadDetailsPage = () => {
                                     mr-2"
                   >
                     {canEdit && (
-                      <button onClick={handleToggleLock}>
+                      <button onClick={handleToggleLock} className="mr-2">
                         {thread.isLocked ? (
                           <Badge
                             variant="destructive"
@@ -154,6 +183,14 @@ const ThreadDetailsPage = () => {
                           </Badge>
                         )}
                       </button>
+                    )}
+                    {canEdit && thread?.id && (
+                      <Badge
+                        className="cursor-pointer"
+                        onClick={() => handleDelete(thread.id)}
+                      >
+                        Delete
+                      </Badge>
                     )}
                   </div>
                 </TableHead>
