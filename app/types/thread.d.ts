@@ -15,6 +15,8 @@ export type Comment = {
   content: string;
   creationDate: Timestamp;
   creator: User;
+  comment: number;
+  newComments: Comment[]
 }
 
 export type Thread = {

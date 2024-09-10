@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 import { Timestamp } from 'firebase/firestore'; 
 import { getUserById } from './user.db';
 import { tree } from 'next/dist/build/templates/app-page';
+import { threadId } from 'worker_threads';
 
 
 export const getAllThreads = async (): Promise<Thread[]> => {
@@ -197,5 +198,46 @@ export const deleteThread = async (threadId: string): Promise<boolean> => {
     } catch (error) {
         toast.error('Failed to delete thread: ' + (error as Error).message);
         return false;
+    }
+}
+
+export const addCommentToComment = async (threadId: string, commentId: string, comment: Comment): Promise<Comment> => {
+    try {
+        const threadDocRef = doc(db, 'threads', threadId);
+        const threadDoc = await getDoc(threadDocRef);
+        
+        if (!threadDoc.exists()) {
+            throw new Error('Comment ID is required');
+        }
+
+        const threadData = threadDoc.data() as Thread;
+        if(!threadData) {
+            throw new Error('Thread not found');
+        }
+
+        const comments = threadData.comments || []
+        const parentComment = comments.find((c: Comment) => c.id === commentId);
+        if (!parentComment) {
+            throw new Error('Parent comment not found');
+        }
+
+        const newComment = {
+            ...comment,
+            id: comment.id || doc(db, 'comments').id,
+            creationData: comment.creationDate || Timestamp.now(),
+        }
+        
+        parentComment.newComments = [...(parentComment.newComments || []), newComment];
+        parentComment.comment = parentComment.comment ? parentComment.comment + 1 : 1;
+        await updateDoc(threadDocRef, {
+            comments: comments.map((c: Comment) => (c.id === commentId ? parentComment : c)),
+        });
+        toast.success('Comment added successfully!');
+          
+        return newComment
+     
+    } catch (error) {
+        console.error('Error adding comment to comment:', error);
+        throw error
     }
 }

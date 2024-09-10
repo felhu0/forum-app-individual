@@ -21,6 +21,7 @@ import { addNewUser } from "@/lib/user.db";
 import { MdErrorOutline } from "react-icons/md";
 
 type SignUpFormValues = {
+  id: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -62,6 +63,7 @@ export const SignUpForm = () => {
         name: "",
         email: values.email,
         password: values.password,
+        isModerator: false,
       });
       router.push("/");
       console.log("User added successfully");

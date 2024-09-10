@@ -1,0 +1,1 @@
+export const offensiveWords = ["damn", "hell", "shit", "fuck"]
