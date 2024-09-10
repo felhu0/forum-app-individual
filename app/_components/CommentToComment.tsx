@@ -16,6 +16,7 @@ type CommentToCommentProps = {
   setAllComments: (comments: Comment[]) => void;
   parentCommentId?: string;
   onCancel?: () => void;
+  isLocked: boolean;
 };
 
 export const handleComment = async (
@@ -80,6 +81,7 @@ export const CommentToComment: React.FC<CommentToCommentProps> = ({
   setAllComments,
   parentCommentId,
   onCancel,
+  isLocked,
 }) => {
   const [newCommentContent, setNewCommentContent] = useState<string>("");
   const [selectedCommentId, setSelectedCommentId] = useState<string | null>(
@@ -103,7 +105,7 @@ export const CommentToComment: React.FC<CommentToCommentProps> = ({
 
   return (
     <div>
-      {!isReplying && (
+      {!isReplying && !isLocked && (
         <button
           className="border-[1px] rounded-full m-2 px-4 py-2 bg-yellow-200 text-xs"
           onClick={() => setIsReplying(true)}
@@ -123,7 +125,7 @@ export const CommentToComment: React.FC<CommentToCommentProps> = ({
             <button
               className="border-[1px] rounded-full m-2 px-4 py-2 bg-red-400 text-xs"
               onClick={() => {
-                setIsReplying(true);
+                setIsReplying(false);
                 if (onCancel) onCancel();
               }}
             >

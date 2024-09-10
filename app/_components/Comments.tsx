@@ -153,6 +153,7 @@ export const Comments: React.FC<CommentsProps> = ({
                   comments={allComments}
                   setAllComments={setAllComments}
                   parentCommentId={comment.id}
+                  isLocked={isLocked}
                 />
               </React.Fragment>
             );

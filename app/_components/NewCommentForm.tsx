@@ -22,6 +22,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { GoCommentDiscussion } from "react-icons/go";
 import { Badge } from "@/components/ui/badge";
 import { RiRadioButtonLine } from "react-icons/ri";
+import { censoredComment } from "@/lib/censoredComment";
+import { offensiveWords } from "@/lib/offensiveWords";
 
 type NewCommentFormProps = {
   id: string;
@@ -60,9 +62,10 @@ export const NewCommentForm: React.FC<NewCommentFormProps> = ({
     }
 
     try {
+      const censoredContent = censoredComment(data.commentBody, offensiveWords);
       const newComment: Comment = {
         id: uuidv4(),
-        content: data.commentBody,
+        content: censoredContent,
         creationDate: Timestamp.now(),
         creator: {
           id: currentUser.id,
