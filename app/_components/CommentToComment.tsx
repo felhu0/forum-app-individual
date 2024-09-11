@@ -23,7 +23,6 @@ export const handleComment = async (
   threadId: string,
   currentUser: User | null,
   newCommentContent: string,
-  selectedCommentId: string | null,
   parentCommentId: string | undefined,
   comments: Comment[],
   setAllComments: (comments: Comment[]) => void
@@ -84,9 +83,6 @@ export const CommentToComment: React.FC<CommentToCommentProps> = ({
   isLocked,
 }) => {
   const [newCommentContent, setNewCommentContent] = useState<string>("");
-  const [selectedCommentId, setSelectedCommentId] = useState<string | null>(
-    null
-  );
   const [isReplying, setIsReplying] = useState<boolean>(false);
 
   const handleSubmit = async () => {
@@ -94,7 +90,6 @@ export const CommentToComment: React.FC<CommentToCommentProps> = ({
       threadId,
       currentUser,
       newCommentContent,
-      selectedCommentId,
       parentCommentId,
       comments,
       setAllComments
@@ -105,7 +100,7 @@ export const CommentToComment: React.FC<CommentToCommentProps> = ({
 
   return (
     <div>
-      {!isReplying && !isLocked && (
+      {!isReplying && !isLocked && currentUser && (
         <button
           className="border-[1px] rounded-full m-2 px-4 py-2 bg-yellow-200 text-xs"
           onClick={() => setIsReplying(true)}

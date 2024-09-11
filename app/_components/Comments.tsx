@@ -4,7 +4,6 @@ import React from "react";
 import {
   Table,
   TableBody,
-  TableCell,
   TableHead,
   TableHeader,
   TableRow,
@@ -30,6 +29,7 @@ type CommentsProps = {
   handleAnswered: (commentId: string) => Promise<void>;
   isQnA: boolean;
   isLocked: boolean;
+  creator: string;
 };
 
 export const Comments: React.FC<CommentsProps> = ({
@@ -39,6 +39,7 @@ export const Comments: React.FC<CommentsProps> = ({
   isQnA,
   isLocked,
   threadId,
+  creator,
 }) => {
   const { user: currentUser } = useAuth();
   const router = useRouter();
@@ -46,6 +47,10 @@ export const Comments: React.FC<CommentsProps> = ({
   const answeredComment = comments.find(
     (comment) => comment.id === answeredCommentId
   );
+
+  const { user } = useAuth();
+
+  const canEdit = user && (user.id === creator || user.isModerator);
 
   return (
     <>
@@ -112,39 +117,54 @@ export const Comments: React.FC<CommentsProps> = ({
                       </span>
                     </div>
 
-                    <div className="">
-                      {isQnA &&
-                        (isAnswered ? (
-                          <span
-                            className={`flex items-center ${
-                              isLocked ? "text-green-600/70" : "text-green-600"
-                            }`}
-                          >
-                            <FaCheck className="mr-2" />
-                            Answered
-                          </span>
-                        ) : (
-                          <button
-                            className={`flex items-center ${
-                              isLocked ? "text-gray-400" : "text-gray-600"
-                            }`}
-                            onClick={() => {
-                              if (currentUser) {
+                    {canEdit && (
+                      <div className="">
+                        {isQnA &&
+                          (isAnswered ? (
+                            <span
+                              className={`flex items-center ${
+                                isLocked
+                                  ? "text-green-600/70"
+                                  : "text-green-600"
+                              }`}
+                            >
+                              <FaCheck className="mr-2" />
+                              Answered
+                            </span>
+                          ) : (
+                            <button
+                              className={`flex items-center ${
+                                isLocked ? "text-gray-400" : "text-gray-600"
+                              }`}
+                              onClick={() => {
+                                if (!currentUser) {
+                                  router.push("/log-in");
+                                  toast.error(
+                                    "You need to log in to mark a comment as answered."
+                                  );
+                                  return;
+                                }
+
+                                if (
+                                  currentUser.id !== creator &&
+                                  !currentUser.isModerator
+                                ) {
+                                  toast.error(
+                                    "Only the thread creator or a moderator can mark a comment as answered."
+                                  );
+                                  return;
+                                }
+
                                 handleAnswered(comment.id);
-                              } else {
-                                router.push("/log-in");
-                                toast.error(
-                                  "You need to log in to mark a comment as answered."
-                                );
-                              }
-                            }}
-                            disabled={isLocked}
-                          >
-                            <FaCheck className="mr-2" />
-                            Mark as Answered
-                          </button>
-                        ))}
-                    </div>
+                              }}
+                              disabled={isLocked}
+                            >
+                              <FaCheck className="mr-2" />
+                              Mark as Answered
+                            </button>
+                          ))}
+                      </div>
+                    )}
                   </div>
                 </TableRow>
                 <CommentToComment

@@ -20,6 +20,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { MdErrorOutline } from "react-icons/md";
 
 type LoginFormValues = {
+  id: string;
   email: string;
   password: string;
 };

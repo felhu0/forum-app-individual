@@ -29,9 +29,6 @@ import Loading from "@/app/_components/Loading";
 import { AlertCircle } from "lucide-react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { MarkedAsAnswered } from "@/app/_components/MarkedAsAnswered";
-import { auth } from "@/firebase.config";
-import { set } from "zod";
 
 type Params = {
   id: string;
@@ -236,6 +233,7 @@ const ThreadDetailsPage = () => {
               answeredCommentId={answeredCommentId ?? null}
               isQnA={thread.isQnA ?? false}
               isLocked={thread.isLocked}
+              creator={thread.creator.id}
             />
           )}
         </div>

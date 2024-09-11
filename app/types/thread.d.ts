@@ -8,8 +8,6 @@ type ThreadCategory =
     | 'Cloud Computing'
     | 'Tech News & Trends';
 
-type ThreadStatus = 'New' | 'Hot';
-
 export type Comment = {
   id: string;
   content: string;
