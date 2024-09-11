@@ -137,24 +137,6 @@ export const Comments: React.FC<CommentsProps> = ({
                                 isLocked ? "text-gray-400" : "text-gray-600"
                               }`}
                               onClick={() => {
-                                if (!currentUser) {
-                                  router.push("/log-in");
-                                  toast.error(
-                                    "You need to log in to mark a comment as answered."
-                                  );
-                                  return;
-                                }
-
-                                if (
-                                  currentUser.id !== creator &&
-                                  !currentUser.isModerator
-                                ) {
-                                  toast.error(
-                                    "Only the thread creator or a moderator can mark a comment as answered."
-                                  );
-                                  return;
-                                }
-
                                 handleAnswered(comment.id);
                               }}
                               disabled={isLocked}
